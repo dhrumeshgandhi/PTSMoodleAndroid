@@ -25,7 +25,7 @@
         android:theme="@style/AppTheme">
         <meta-data
             android:name="com.parse.push.gcm_sender_id"
-            android:value="id:385621664556" />
+            android:value="@string/gcm_sender_id_with_ID" />
 
         <service android:name="com.parse.PushService" />
 
