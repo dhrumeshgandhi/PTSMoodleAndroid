@@ -12,6 +12,8 @@ import android.view.inputmethod.InputMethodManager;
 
 import com.parse.ConfigCallback;
 import com.parse.FindCallback;
+import com.parse.FunctionCallback;
+import com.parse.ParseCloud;
 import com.parse.ParseConfig;
 import com.parse.ParseException;
 import com.parse.ParseObject;
@@ -21,7 +23,6 @@ import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.hssf.usermodel.HSSFRow;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
-import org.json.JSONArray;
 
 import java.io.FileInputStream;
 import java.io.InputStream;
@@ -88,11 +89,25 @@ public class Functions {
         });
     }
 
-    protected static void sendPush(String title, String message, JSONArray channels) {
-        Map<String, Object> pushDetails = new HashMap<>();
-        pushDetails.put("title", title);
-        pushDetails.put("message", message);
-        pushDetails.put("channels", channels);
+    protected static void sendNotification(String title, String message, List<String> channels) {
+        try {
+            Map<String, Object> params = new HashMap<>();
+            params.put("title", title);
+            params.put("message", message);
+            params.put("channels", channels);
+            ParseCloud.callFunctionInBackground("sendPush", params, new FunctionCallback<String>() {
+                @Override
+                public void done(String message, ParseException e) {
+                    if (e == null) {
+                        Log.d(TAG, "Function Call Success:" + message);
+                    } else {
+                        Log.e(TAG, "ERROR: " + message, e);
+                    }
+                }
+            });
+        } catch (Exception e) {
+            Log.e(TAG, "ERROR", e);
+        }
     }
 
     protected static void setFragment(FragmentManager fragmentManager,
@@ -188,6 +203,7 @@ public class Functions {
             }
         }.start();
     }
+
     //For File Pick Dialog ...Add following to activity/fragment
 
       /*  Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
