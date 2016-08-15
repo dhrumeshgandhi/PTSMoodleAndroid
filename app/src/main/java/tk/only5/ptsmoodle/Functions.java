@@ -146,12 +146,12 @@ public class Functions {
                                 notificationList.add(new Notification(object.getString("TITLE"), object.getString("DATE_TIME"), object.getString("MESSAGE")));
                                 notificationListAdapter.notifyDataSetChanged();
                             }
-                            srlNotification.setRefreshing(false);
                         }
                     });
                 } else {
                     Log.e(TAG, "Query unsuccessful", e);
                 }
+                srlNotification.setRefreshing(false);
             }
         });
     }
