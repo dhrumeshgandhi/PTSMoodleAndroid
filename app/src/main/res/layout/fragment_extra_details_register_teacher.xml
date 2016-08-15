@@ -1,0 +1,40 @@
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="tk.only5.ptsmoodle.ExtraDetailsRegisterFragment">
+
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <android.support.design.widget.TextInputLayout
+            android:id="@+id/tilTeacherExtraDetailsId"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Teacher ID">
+
+            <EditText
+                android:id="@+id/etTeacherExtraDetailsId"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="text" />
+        </android.support.design.widget.TextInputLayout>
+
+        <tk.only5.ptsmoodle.NonScrollListView
+            android:id="@+id/lvTeacherExtraDetailsClassSubjects"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/tilTeacherExtraDetailsId" />
+
+        <android.support.design.widget.FloatingActionButton
+            android:id="@+id/fabTeacherExtraDetailsAddClassSubject"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/lvTeacherExtraDetailsClassSubjects"
+            android:layout_centerHorizontal="true"
+            android:elevation="5dp"
+            android:src="@drawable/add_item_512" />
+    </RelativeLayout>
+</FrameLayout>

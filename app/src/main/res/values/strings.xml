@@ -1,0 +1,19 @@
+<resources>
+    <string name="app_name">PTS Moodle</string>
+    <string name="label_email_address">Email Address</string>
+    <string name="label_password">Password</string>
+    <string name="label_not_registered">Not Registered? Click Here</string>
+    <string name="label_login">LOGIN</string>
+    <string name="label_register">REGISTER</string>
+    <string name="error_incorrect_credentials">INCORRECT EMAIL/PASSWORD!</string>
+    <string name="error_insufficient_credentials">PLEASE ENTER EMAIL/PASSWORD!</string>
+    <string name="error_fill_details">ALL FIELDS ARE REQUIRED!</string>
+    <string name="error_technical">SOME TECHNICAL ERROR OCCURRED \nTRY AGAIN LATER!</string>
+    <string name="error_password_not_match">PASSWORDS DON\'T MATCH!</string>
+    <string name="label_teacher">Teacher</string>
+    <string name="label_student">Student</string>
+    <string name="label_parent">Parent</string>
+    <string name="tag_extra_details">EXTRA_DETAILS_OF</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+</resources>
