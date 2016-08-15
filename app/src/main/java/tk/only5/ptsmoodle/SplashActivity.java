@@ -7,7 +7,11 @@ import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 
 import com.parse.ParseAnonymousUtils;
+import com.parse.ParseException;
+import com.parse.ParseInstallation;
+import com.parse.ParsePush;
 import com.parse.ParseUser;
+import com.parse.SaveCallback;
 
 public class SplashActivity extends AppCompatActivity {
 
@@ -18,6 +22,22 @@ public class SplashActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_splash);
         Functions.getConfig();
+        ParseInstallation.getCurrentInstallation().saveInBackground(new SaveCallback() {
+            @Override
+            public void done(ParseException e) {
+                Log.d(TAG, ParseInstallation.getCurrentInstallation().getString("deviceToken") + "");
+                if (e == null) {
+                    Log.d(TAG, "Installation Saved");
+                    ParsePush.subscribeInBackground("TEST", new SaveCallback() {
+                        @Override
+                        public void done(ParseException e) {
+                            if (e == null) Log.d(TAG, "Channel Subscribed");
+                            else Log.e(TAG, "ERROR", e);
+                        }
+                    });
+                } else Log.e(TAG, "ERROR", e);
+            }
+        });
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {

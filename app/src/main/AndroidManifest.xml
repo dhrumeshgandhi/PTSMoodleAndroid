@@ -25,11 +25,11 @@
         android:theme="@style/AppTheme">
         <meta-data
             android:name="com.parse.push.gcm_sender_id"
-            android:value="id:385621664556" />
+            android:value="id:693343206985" />
 
         <service android:name="com.parse.PushService" />
 
-        <receiver
+        <receiver.
             android:name="com.parse.GcmBroadcastReceiver"
             android:permission="com.google.android.c2dm.permission.SEND">
             <intent-filter>
@@ -38,7 +38,7 @@
 
                 <category android:name="tk.only5.ptsmoodle" />
             </intent-filter>
-        </receiver>
+        </receiver.>
         <!-- android:name="com.parse.ParsePushBroadcastReceiver" -->
         <receiver
             android:name=".PushBroadcastReceiver"
