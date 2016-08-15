@@ -1,5 +1,7 @@
 <resources>
     <string name="app_name">PTS Moodle</string>
+    <string name="gcm_sender_id_with_ID">id:693343206985</string>
+    <string name="gcm_sender_id">693343206985</string>
     <string name="label_email_address">Email Address</string>
     <string name="label_password">Password</string>
     <string name="label_not_registered">Not Registered? Click Here</string>
