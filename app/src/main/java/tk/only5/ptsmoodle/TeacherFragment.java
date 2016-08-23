@@ -9,8 +9,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 
-import java.util.Arrays;
-
 public class TeacherFragment extends Fragment implements View.OnClickListener {
 
     private View rootView;
@@ -32,7 +30,10 @@ public class TeacherFragment extends Fragment implements View.OnClickListener {
     @Override
     public void onClick(View view) {
         if (view.equals(btnSendNotification)) {
-            Functions.sendNotification("Test", "Hello", Arrays.asList("13012011012", "TEST"));
+            // Functions.sendNotification("Test", "Hello", Arrays.asList("13012011012", "TEST"));
+            NotificationUserSelectionDialogFragment selectionDialogFragement = new NotificationUserSelectionDialogFragment();
+            selectionDialogFragement.setCancelable(false);
+            selectionDialogFragement.show(getFragmentManager(), "SELECTION_DIALOG");
         }
     }
 }
