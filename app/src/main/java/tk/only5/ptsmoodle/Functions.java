@@ -42,6 +42,7 @@ public class Functions {
     private static ProgressDialog dialog;
     private static View[] views;
 
+
     protected static View[] getChildFragmentViews() {
         return views;
     }

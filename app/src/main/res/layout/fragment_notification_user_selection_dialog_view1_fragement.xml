@@ -15,8 +15,9 @@
             android:layout_alignParentTop="true"
             android:layout_centerHorizontal="true"
             android:layout_marginTop="77dp"
+            android:gravity="center"
             android:text="@string/notification_user_selection_choice"
-            android:textSize="15sp" />
+            android:textSize="20sp" />
 
         <Spinner
             android:id="@+id/spinUserSelection"

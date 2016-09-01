@@ -4,6 +4,7 @@ package tk.only5.ptsmoodle;
 import android.app.Activity;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.DialogFragment;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -15,17 +16,19 @@ import com.parse.ParseUser;
 public class NotificationUserSelectionDialogFragment extends DialogFragment implements View.OnClickListener {
 
     protected static CustomViewPager viewPager;
+    protected static Button btnNext, btnPrevious;
     private View rootView;
     private Activity activity;
     private String TAG = InitClass.TAG;
     private ParseUser user;
-    private Button btnNext, btnPrevious, btnCancel;
+    private FloatingActionButton fabCancel;
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         rootView = inflater.inflate(R.layout.fragment_notification_user_selection_dialog_fragement, container, false);
         activity = getActivity();
+        getDialog().setTitle("Send Notification");
         user = ParseUser.getCurrentUser();
         btnNext = (Button) rootView.findViewById(R.id.btnNext);
         btnPrevious = (Button) rootView.findViewById(R.id.btnPrevious);
@@ -50,4 +53,5 @@ public class NotificationUserSelectionDialogFragment extends DialogFragment impl
             this.dismiss();
         }
     }
+
 }

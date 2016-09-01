@@ -32,6 +32,7 @@ public class NotificationUserSelectionDialogViewsFragement extends Fragment impl
                         R.array.notification_user_selection_list,
                         android.R.layout.simple_spinner_dropdown_item);
                 spinUserSelection.setAdapter(userSelectionAdapter);
+                NotificationUserSelectionDialogFragment.btnPrevious.setVisibility(View.INVISIBLE);
                 break;
             case 1:
                 break;
