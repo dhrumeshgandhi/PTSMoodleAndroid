@@ -2,7 +2,7 @@ package tk.only5.ptsmoodle;
 
 import android.app.Activity;
 import android.app.ProgressDialog;
-import android.content.Context;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
@@ -20,7 +20,6 @@ import com.parse.ParseException;
 import com.parse.ParseFile;
 import com.parse.ParseObject;
 import com.parse.ParseQuery;
-import com.parse.ParseUser;
 import com.parse.ProgressCallback;
 import com.parse.SaveCallback;
 
@@ -29,9 +28,13 @@ import org.apache.poi.hssf.usermodel.HSSFRow;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -210,9 +213,16 @@ public class Functions {
         }.start();
     }
 
-    protected static void uploadFile(String path, Context context, ParseUser user) throws Exception {
-        final String fileName = path.substring(path.lastIndexOf('/'));
-        FileInputStream fis = context.openFileInput(path);
+    protected static String getCurrentDateTime() {
+        DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
+        return dateFormat.format(new Date());
+    }
+
+    protected static void uploadFile(String path, final String topic, final Activity activity, final String uploadedBy, final ProgressDialog dialog) throws Exception {
+        final String fileName = path.substring(path.lastIndexOf('/') + 1).replace(" ", "_");
+        Log.d(TAG, fileName);
+        dialog.setMessage(fileName);
+        FileInputStream fis = new FileInputStream(new File(path));
         byte[] file = new byte[(int) fis.getChannel().size()];
         fis.read(file);
         final ParseFile parseFile = new ParseFile(fileName, file);
@@ -222,7 +232,36 @@ public class Functions {
             public void done(ParseException e) {
                 if (e == null) {
                     Log.d(TAG, "FILE UPLOADED:" + parseFile.getUrl());
+                    ParseObject uploadDoc = new ParseObject("UploadedFiles");
+                    uploadDoc.put("NAME", fileName);
+                    uploadDoc.put("UPLOADED_BY", uploadedBy);
+                    uploadDoc.put("UPLOAD_DATE", getCurrentDateTime());
+                    uploadDoc.put("TOPIC", topic);
+                    uploadDoc.put("DOCUMENT", parseFile);
+                    uploadDoc.saveInBackground(new SaveCallback() {
+                        @Override
+                        public void done(ParseException e) {
+                            if (e == null) {
+                                Log.d(TAG, "FileObjectSaved");
+                                activity.runOnUiThread(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        Snackbar.make(activity.findViewById(R.id.fragmentContainerUser), "FILE UPLOADED:" + fileName, Snackbar.LENGTH_SHORT).show();
+                                    }
+                                });
+                            } else
+                                Log.e(TAG, "ERROR", e);
+                        }
+                    });
+                    dialog.dismiss();
                 } else {
+                    activity.runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            Snackbar.make(activity.findViewById(R.id.fragmentContainerUser), R.string.error_technical, Snackbar.LENGTH_LONG).show();
+                        }
+                    });
+                    dialog.dismiss();
                     Log.e(TAG, "ERROR:", e);
                 }
                 // dialog.dismiss();
@@ -231,6 +270,7 @@ public class Functions {
             @Override
             public void done(Integer percentDone) {
                 Log.d(TAG, "FILE_UPLOAD_" + fileName + ":" + percentDone + "%");
+                dialog.setProgress(percentDone);
             }
         });
     }

@@ -52,7 +52,6 @@ public class AddClassSubjectListAdapter extends BaseAdapter {
             convertView.setTag(holder);
         } else
             holder = (ViewHolder) convertView.getTag();
-        // holder.tvNumber.setText("Q" + questions.get(position).getId() + ")");
         holder.tvClass.setText(classSubjectList.get(position).getClassItem());
         holder.tvSubject.setText(classSubjectList.get(position).getSubjectItem());
         holder.tvDelete.setText("X");

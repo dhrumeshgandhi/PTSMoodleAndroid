@@ -23,7 +23,7 @@
         </android.support.design.widget.TextInputLayout>
 
         <TextView
-            android:id="@+id/tvStudentExtraDetailSem"
+            android:id="@+id/tvSem"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_below="@id/tilStudentExtraDetailEnroll"
@@ -32,31 +32,35 @@
             android:textSize="20dp" />
 
         <Spinner
-            android:id="@+id/spinStudentExtraDetailSem"
+            android:id="@+id/spinSem"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_below="@id/tilStudentExtraDetailEnroll"
-            android:layout_toRightOf="@id/tvStudentExtraDetailSem"
-            android:contentDescription="@string/label_login" />
+            android:layout_toRightOf="@id/tvSem"
+            android:contentDescription="@string/label_login"
+            android:spinnerMode="dialog"
+            android:textAlignment="center" />
 
         <TextView
-            android:id="@+id/tvStudentExtraDetailBranch"
+            android:id="@+id/tvBranch"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_below="@id/tilStudentExtraDetailEnroll"
             android:layout_marginLeft="8dp"
             android:layout_marginTop="9dp"
-            android:layout_toRightOf="@id/spinStudentExtraDetailSem"
+            android:layout_toRightOf="@id/spinSem"
             android:hint="Branch :"
             android:textSize="20dp" />
 
         <Spinner
-            android:id="@+id/spinStudentExtraDetailBranch"
+            android:id="@+id/spinBranch"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_below="@id/tilStudentExtraDetailEnroll"
-            android:layout_toRightOf="@id/tvStudentExtraDetailBranch"
-            android:contentDescription="@string/label_login" />
+            android:layout_toRightOf="@id/tvBranch"
+            android:contentDescription="@string/label_login"
+            android:spinnerMode="dialog"
+            android:textAlignment="center" />
     </RelativeLayout>
 
 </FrameLayout>

@@ -7,6 +7,7 @@
     <string name="label_not_registered">Not Registered? Click Here</string>
     <string name="label_login">LOGIN</string>
     <string name="label_register">REGISTER</string>
+    <string name="label_topic_file_upload">What is the topic of file to be uploaded?</string>
     <string name="error_incorrect_credentials">INCORRECT EMAIL/PASSWORD!</string>
     <string name="error_insufficient_credentials">PLEASE ENTER EMAIL/PASSWORD!</string>
     <string name="error_fill_details">ALL FIELDS ARE REQUIRED!</string>

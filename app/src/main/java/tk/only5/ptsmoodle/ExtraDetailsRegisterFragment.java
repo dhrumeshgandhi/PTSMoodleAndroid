@@ -30,7 +30,8 @@ public class ExtraDetailsRegisterFragment extends Fragment implements View.OnCli
     private ArrayAdapter<String> spinStudentExtraDetailSemAdapter, spinStudentExtraDetailBranchAdapter;
     private FloatingActionButton fabTeacherAddClassSubject;
     private View[] views;
-    private EditText etTeacherId, etStudentEnrollment, etStudentName, etDialogSubject, etDialogClass;
+    private EditText etTeacherId, etStudentEnrollment, etStudentName, etDialogSubject;
+    private Spinner spinDialogSem, spinDialogBranch;
     private ListView lvClassSubject;
     private ArrayList<ExtraDetailsTeacherClassSubject> listClassSubject = new ArrayList<>();
     private AddClassSubjectListAdapter lvAdapterClassSubject;
@@ -62,11 +63,11 @@ public class ExtraDetailsRegisterFragment extends Fragment implements View.OnCli
             case "Student":
                 rootView = inflater.inflate(R.layout.fragment_extra_details_register_student, container, false);
                 etStudentEnrollment = (EditText) rootView.findViewById(R.id.etStudentExtraDetailsEnroll);
-                spinStudentExtraDetailSem = (Spinner) rootView.findViewById(R.id.spinStudentExtraDetailSem);
+                spinStudentExtraDetailSem = (Spinner) rootView.findViewById(R.id.spinSem);
                 spinStudentExtraDetailSemAdapter = new ArrayAdapter<>(activity, android.R.layout.simple_spinner_dropdown_item, Functions.SEMESTERS);
                 spinStudentExtraDetailSem.setAdapter(spinStudentExtraDetailSemAdapter);
                 spinStudentExtraDetailSemAdapter.notifyDataSetChanged();
-                spinStudentExtraDetailBranch = (Spinner) rootView.findViewById(R.id.spinStudentExtraDetailBranch);
+                spinStudentExtraDetailBranch = (Spinner) rootView.findViewById(R.id.spinBranch);
                 spinStudentExtraDetailBranchAdapter = new ArrayAdapter<>(activity, android.R.layout.simple_spinner_dropdown_item, Functions.BRANCHES);
                 spinStudentExtraDetailBranch.setAdapter(spinStudentExtraDetailBranchAdapter);
                 spinStudentExtraDetailBranchAdapter.notifyDataSetChanged();
@@ -93,17 +94,25 @@ public class ExtraDetailsRegisterFragment extends Fragment implements View.OnCli
                     .setCancelable(false)
                     .setTitle("Add Class and Subject")
                     .show();
-            etDialogClass = (EditText) dialogView.findViewById(R.id.etDialogAddClass);
+            spinDialogSem = (Spinner) dialogView.findViewById(R.id.spinSem);
+            spinDialogBranch = (Spinner) dialogView.findViewById(R.id.spinBranch);
+            spinStudentExtraDetailSemAdapter = new ArrayAdapter<>(activity, android.R.layout.simple_spinner_dropdown_item, Functions.SEMESTERS);
+            spinDialogSem.setAdapter(spinStudentExtraDetailSemAdapter);
+            spinStudentExtraDetailSemAdapter.notifyDataSetChanged();
+            spinStudentExtraDetailBranchAdapter = new ArrayAdapter<>(activity, android.R.layout.simple_spinner_dropdown_item, Functions.BRANCHES);
+            spinDialogBranch.setAdapter(spinStudentExtraDetailBranchAdapter);
+            spinStudentExtraDetailBranchAdapter.notifyDataSetChanged();
             etDialogSubject = (EditText) dialogView.findViewById(R.id.etDialogAddSubject);
             btnDialogAdd = (Button) dialogView.findViewById(R.id.btnDialogAdd);
             btnDialogAdd.setOnClickListener(this);
         } else if (view.equals(btnDialogAdd) && !dialogAddClassSubject.equals(null)) {
             dialogAddClassSubject.dismiss();
-            String classItem, subjectItem;
-            classItem = etDialogClass.getText().toString();
+            String semItem, subjectItem, branchItem;
+            semItem = spinDialogSem.getSelectedItem().toString();
+            branchItem = spinDialogBranch.getSelectedItem().toString();
             subjectItem = etDialogSubject.getText().toString();
-            if (!classItem.isEmpty() && !subjectItem.isEmpty())
-                addToList(new ExtraDetailsTeacherClassSubject(classItem, subjectItem));
+            if (!semItem.isEmpty() && !subjectItem.isEmpty())
+                addToList(new ExtraDetailsTeacherClassSubject(semItem, branchItem, subjectItem));
         }
         //DialogAddClassSubjectFragment dialogAddClassSubjectFragment = new DialogAddClassSubjectFragment();
         //dialogAddClassSubjectFragment.show(getChildFragmentManager(), "TEST");

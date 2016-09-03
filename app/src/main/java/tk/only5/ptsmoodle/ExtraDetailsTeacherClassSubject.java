@@ -8,19 +8,20 @@ import org.json.JSONObject;
  * Created by DHRUMESH on 8/2/2016.
  */
 public class ExtraDetailsTeacherClassSubject {
-    String classItem, subjectItem;
+    String branchItem, subjectItem, semItem;
 
-    public ExtraDetailsTeacherClassSubject(String classItem, String subjectItem) {
-        this.classItem = classItem;
+    public ExtraDetailsTeacherClassSubject(String semItem, String branchItem, String subjectItem) {
+        this.branchItem = branchItem;
         this.subjectItem = subjectItem;
+        this.semItem = semItem;
     }
 
-    public String getClassItem() {
-        return classItem;
+    public String getBranchItem() {
+        return branchItem;
     }
 
-    public void setClassItem(String classItem) {
-        this.classItem = classItem;
+    public void setBranchItem(String branchItem) {
+        this.branchItem = branchItem;
     }
 
     public String getSubjectItem() {
@@ -33,10 +34,22 @@ public class ExtraDetailsTeacherClassSubject {
 
     public JSONObject toJSONObject() {
         try {
-            return (new JSONObject()).put("CLASS", classItem).put("SUBJECT", subjectItem);
+            return (new JSONObject()).put("BRANCH", branchItem).put("SUBJECT", subjectItem).put("SEM", semItem);
         } catch (Exception e) {
             Log.e(InitClass.TAG, "ERROR", e);
             return new JSONObject();
         }
+    }
+
+    public String getSemItem() {
+        return semItem;
+    }
+
+    public void setSemItem(String semItem) {
+        this.semItem = semItem;
+    }
+
+    public String getClassItem() {
+        return semItem + " " + branchItem;
     }
 }
