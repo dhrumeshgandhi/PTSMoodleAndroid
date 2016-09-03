@@ -20,6 +20,7 @@ android {
 }
 repositories {
     jcenter()
+    mavenCentral()
 }
 
 dependencies {
@@ -31,4 +32,5 @@ dependencies {
     compile 'com.flurry.android:analytics:+'
     compile 'org.apache.poi:poi:3.14'
     compile 'com.android.support:support-v4:24.1.1'
+    compile 'com.github.angads25:filepicker:1.0.3'
 }

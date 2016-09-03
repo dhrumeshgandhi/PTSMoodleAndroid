@@ -2,6 +2,7 @@ package tk.only5.ptsmoodle;
 
 import android.app.Activity;
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
@@ -16,8 +17,12 @@ import com.parse.FunctionCallback;
 import com.parse.ParseCloud;
 import com.parse.ParseConfig;
 import com.parse.ParseException;
+import com.parse.ParseFile;
 import com.parse.ParseObject;
 import com.parse.ParseQuery;
+import com.parse.ParseUser;
+import com.parse.ProgressCallback;
+import com.parse.SaveCallback;
 
 import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.hssf.usermodel.HSSFRow;
@@ -38,10 +43,10 @@ import java.util.Map;
 public class Functions {
     protected static ArrayList<String> SEMESTERS = new ArrayList<>(), BRANCHES = new ArrayList<>();
     protected static FragmentManager currentFragmentManager;
+    protected static int FILE_PICK_REQUEST_CODE = 11111;
     private static String TAG = InitClass.TAG;
     private static ProgressDialog dialog;
     private static View[] views;
-
 
     protected static View[] getChildFragmentViews() {
         return views;
@@ -205,6 +210,30 @@ public class Functions {
         }.start();
     }
 
+    protected static void uploadFile(String path, Context context, ParseUser user) throws Exception {
+        final String fileName = path.substring(path.lastIndexOf('/'));
+        FileInputStream fis = context.openFileInput(path);
+        byte[] file = new byte[(int) fis.getChannel().size()];
+        fis.read(file);
+        final ParseFile parseFile = new ParseFile(fileName, file);
+        Log.d(TAG, "FILE_UPLOAD_STARTED:" + path);
+        parseFile.saveInBackground(new SaveCallback() {
+            @Override
+            public void done(ParseException e) {
+                if (e == null) {
+                    Log.d(TAG, "FILE UPLOADED:" + parseFile.getUrl());
+                } else {
+                    Log.e(TAG, "ERROR:", e);
+                }
+                // dialog.dismiss();
+            }
+        }, new ProgressCallback() {
+            @Override
+            public void done(Integer percentDone) {
+                Log.d(TAG, "FILE_UPLOAD_" + fileName + ":" + percentDone + "%");
+            }
+        });
+    }
     //For File Pick Dialog ...Add following to activity/fragment
 
       /*  Intent intent = new Intent(Intent.ACTION_GET_CONTENT);

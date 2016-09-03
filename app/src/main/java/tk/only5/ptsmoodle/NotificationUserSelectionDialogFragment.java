@@ -32,9 +32,9 @@ public class NotificationUserSelectionDialogFragment extends DialogFragment impl
         user = ParseUser.getCurrentUser();
         btnNext = (Button) rootView.findViewById(R.id.btnNext);
         btnPrevious = (Button) rootView.findViewById(R.id.btnPrevious);
-        btnCancel = (Button) rootView.findViewById(R.id.btnCancel);
+        fabCancel = (FloatingActionButton) rootView.findViewById(R.id.fabCancel);
         btnNext.setOnClickListener(this);
-        btnCancel.setOnClickListener(this);
+        fabCancel.setOnClickListener(this);
         btnPrevious.setOnClickListener(this);
         viewPager = (CustomViewPager) rootView.findViewById(R.id.vpNotificationUserSelectionDialog);
         viewPager.setAdapter(new NotificationUserSelectionDialogViewPagerAdapter(getChildFragmentManager()));
@@ -49,7 +49,7 @@ public class NotificationUserSelectionDialogFragment extends DialogFragment impl
         } else if (view.equals(btnPrevious)) {
             int current = viewPager.getCurrentItem();
             viewPager.setCurrentItem(current - 1);
-        } else if (view.equals(btnCancel)) {
+        } else if (view.equals(fabCancel)) {
             this.dismiss();
         }
     }

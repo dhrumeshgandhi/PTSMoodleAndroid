@@ -1,6 +1,7 @@
 package tk.only5.ptsmoodle;
 
 import android.app.Application;
+import android.util.Log;
 
 import com.flurry.android.FlurryAgent;
 import com.parse.Parse;
@@ -28,6 +29,12 @@ public class InitClass extends Application {
         new FlurryAgent.Builder()
                 .withLogEnabled(true)
                 .build(getApplicationContext(), "TQMCT6YDRH2PP44HSW3C");
+        Thread.setDefaultUncaughtExceptionHandler(new Thread.UncaughtExceptionHandler() {
+            @Override
+            public void uncaughtException(Thread thread, Throwable throwable) {
+                Log.e(TAG, thread.getName(), throwable);
+            }
+        });
     }
 
 

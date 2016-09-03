@@ -88,6 +88,7 @@ public class UserFragmentActivity extends AppCompatActivity implements View.OnCl
     @Override
     public void onClick(View view) {
         if (view.equals(btnLogout)) {
+            loadingDialog = Functions.showLoading(activity, "Logging Out!");
             ParseUser.logOutInBackground(new LogOutCallback() {
                 @Override
                 public void done(ParseException e) {
@@ -103,11 +104,13 @@ public class UserFragmentActivity extends AppCompatActivity implements View.OnCl
                         FragmentManager fragmentManager = getSupportFragmentManager();
                         Log.d(TAG, "popping backstack");
                         fragmentManager.popBackStack();
+                        loadingDialog.dismiss();
                         startActivity(new Intent(UserFragmentActivity.this, LoginSignUpFragmentActivity.class));
                         finish();
                     } else {
                         Log.e(TAG, "Logout Failed", e);
                         Snackbar.make(rlUserFragemtnActivity, R.string.error_technical, Snackbar.LENGTH_LONG).show();
+                        loadingDialog.dismiss();
                     }
                 }
             });
@@ -126,4 +129,5 @@ public class UserFragmentActivity extends AppCompatActivity implements View.OnCl
         }*/
         super.onBackPressed();
     }
+
 }
