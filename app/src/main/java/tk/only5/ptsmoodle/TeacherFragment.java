@@ -31,7 +31,7 @@ public class TeacherFragment extends Fragment implements View.OnClickListener {
     private static ParseUser user;
     private View rootView;
     private Activity activity;
-    private Button btnSendNotification, btnUploadNotes;
+    private Button btnSendNotification, btnUploadNotes, btnAddQuiz;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -40,8 +40,10 @@ public class TeacherFragment extends Fragment implements View.OnClickListener {
         activity.setTitle("Teacher");
         btnSendNotification = (Button) rootView.findViewById(R.id.btnSendNotification);
         btnUploadNotes = (Button) rootView.findViewById(R.id.btnUploadNotes);
+        btnAddQuiz = (Button) rootView.findViewById(R.id.btnAddQuiz);
         btnSendNotification.setOnClickListener(this);
         btnUploadNotes.setOnClickListener(this);
+        btnAddQuiz.setOnClickListener(this);
         user = ParseUser.getCurrentUser();
         return rootView;
     }
@@ -55,6 +57,8 @@ public class TeacherFragment extends Fragment implements View.OnClickListener {
         } else if (view.equals(btnUploadNotes)) {
             subject = "";
             new GetTopicDialogFragment().show(getFragmentManager(), "TOPIC_DIALOG");
+        } else if (view.equals(btnAddQuiz)) {
+
         }
     }
 
@@ -111,7 +115,7 @@ public class TeacherFragment extends Fragment implements View.OnClickListener {
                                     public void run() {
                                         try {
                                             Log.d(TAG, "UPLOADING FILE:" + files[0]);
-                                            Functions.uploadFile(files[0], subject, sem, branch, activity, user.getString("TEACHER_ID"), dialog);
+                                            Functions.uploadFile(files[0], subject, sem, branch, activity, user, dialog);
                                         } catch (Exception e) {
                                             Log.e(TAG, "Error", e);
                                         }
