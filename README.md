@@ -7,12 +7,12 @@
      -Notification to related Students
      -Entry in UploadedFiles & Notification Table
 -SeeNotification(Parent & Student)
+-See Uploaded Notes(Student)
+-Download Uploaded Notes(Student)
 </pre>
 
 <b>PTS Moodle (Remaining)</b>
 <pre>
--See Uploaded Notes(Student)
--Download Uploaded Notes(Student)
 -Add Quiz(Teacher)
 -Give Quiz(Student)
 -See Result of Quiz(Parent & Student)
