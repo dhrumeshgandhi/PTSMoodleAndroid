@@ -212,15 +212,18 @@ public class Functions {
     }
 
     protected static String getCurrentDateTime() {
-        DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
+        DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm");
         return dateFormat.format(new Date());
     }
 
-    protected static void uploadFile(String path, final String subject, final String sem, final String branch, final Activity activity, final String uploadedBy, final ProgressDialog dialog) throws Exception {
+    protected static void uploadFile(String path, final String subject, final String sem, final String branch, final Activity activity, final ParseUser user, final ProgressDialog dialog) throws Exception {
         final String fileName = path.substring(path.lastIndexOf('/') + 1).replace(" ", "_");
+        final String uploadedBy = user.getString("TEACHER_ID");
+        final String teacherName = user.getString("FIRST_NAME") + " " + user.getString("LAST_NAME");
         Log.d(TAG, fileName);
         dialog.setMessage(fileName);
         FileInputStream fis = new FileInputStream(new File(path));
+        Log.d(TAG, "FILE SIZE:" + (((double) fis.getChannel().size()) / (1024 * 1024)) + " MB");
         byte[] file = new byte[(int) fis.getChannel().size()];
         fis.read(file);
         final ParseFile parseFile = new ParseFile(fileName, file);
@@ -249,6 +252,32 @@ public class Functions {
                                         Snackbar.make(activity.findViewById(R.id.fragmentContainerUser), "FILE UPLOADED:" + fileName, Snackbar.LENGTH_SHORT).show();
                                     }
                                 });
+                                ParseQuery<ParseUser> query = ParseUser.getQuery();
+                                query.whereEqualTo("BRANCH", branch);
+                                query.whereEqualTo("SEMESTER", sem);
+                                query.whereEqualTo("POST", "Student");
+                                query.findInBackground(new FindCallback<ParseUser>() {
+                                    @Override
+                                    public void done(List<ParseUser> objects, ParseException e) {
+                                        List<String> channels = new ArrayList<String>();
+                                        if (e == null) {
+                                            String title = activity.getString(
+                                                    R.string.notification_title_note_uploaded);
+                                            String message = activity.getString(
+                                                    R.string.notification_message_note_uploaded)
+                                                    .replace("#TEACHER#", teacherName)
+                                                    .replace("#SUBJECT#", subject);
+                                            for (ParseUser user : objects) {
+                                                Log.d(TAG, user.getEmail());
+                                                channels.add(user.getString("ENROLLMENT"));
+                                            }
+                                            if (channels.size() > 0) {
+                                                sendNotification(title, message, channels);
+                                            }
+                                            addNotificationToList(title, message, channels, uploadedBy);
+                                        } else Log.e(TAG, "ERROR", e);
+                                    }
+                                });
                             } else
                                 Log.e(TAG, "ERROR", e);
                         }
@@ -275,6 +304,21 @@ public class Functions {
         });
     }
 
+    protected static void addNotificationToList(String title, String message, List<String> sentTo, String sentBy) {
+        ParseObject notification = new ParseObject("Notification");
+        notification.put("TITLE", title);
+        notification.put("MESSAGE", message);
+        notification.put("DATE_TIME", getCurrentDateTime());
+        notification.put("SENT_TO", sentTo);
+        notification.put("SENT_BY", sentBy);
+        notification.saveInBackground(new SaveCallback() {
+            @Override
+            public void done(ParseException e) {
+                if (e == null) Log.d(TAG, "NOTIFICATION ADDED!");
+                else Log.e(TAG, "ERROR", e);
+            }
+        });
+    }
     protected static void getTeacherClassSubjects(String teacherID) {
         final ArrayList<ExtraDetailsTeacherClassSubject> classSubjects = new ArrayList<>();
         ParseQuery<ParseUser> query = ParseUser.getQuery();
@@ -315,5 +359,7 @@ public class Functions {
             }
         });
     }
+
+//    protected static void loadNotes(String sem,String branch,Activity activity,Ar)
 
 }
