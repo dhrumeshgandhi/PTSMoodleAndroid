@@ -2,15 +2,17 @@
 PTS Moodle Android
 
 <b>PTS Moodle (Done)</b>
+<pre>
 -Login(ALL)
 -Registration(ALL)
 -Upload Note(Teacher)
      -Notification to related Students
      -Entry in UploadedFiles & Notification Table
 -SeeNotification(Parent & Student)
+</pre>
 
-
-PTS Moodle (Remaining)
+<b>PTS Moodle (Remaining)</b>
+<pre>
 -See Uploaded Notes(Student)
 -Download Uploaded Notes(Student)
 -Add Quiz(Teacher)
@@ -21,3 +23,4 @@ PTS Moodle (Remaining)
 -See Attendence(Parent & Teacher)
 -Add Reports of Exams(Teacher)
 -See Reports(Parent & Teacher)
+</pre>
