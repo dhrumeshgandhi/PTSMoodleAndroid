@@ -1,6 +1,4 @@
-# PTSMoodleAndroid
-PTS Moodle Android
-
+# PTS Moodle Android
 <b>PTS Moodle (Done)</b>
 <pre>
 -Login(ALL)
