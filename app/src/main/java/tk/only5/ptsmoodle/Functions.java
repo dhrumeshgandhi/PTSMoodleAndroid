@@ -2,6 +2,7 @@ package tk.only5.ptsmoodle;
 
 import android.app.Activity;
 import android.app.ProgressDialog;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
@@ -12,31 +13,38 @@ import android.view.inputmethod.InputMethodManager;
 
 import com.parse.ConfigCallback;
 import com.parse.FindCallback;
+import com.parse.FunctionCallback;
+import com.parse.ParseCloud;
 import com.parse.ParseConfig;
 import com.parse.ParseException;
+import com.parse.ParseFile;
 import com.parse.ParseObject;
 import com.parse.ParseQuery;
+import com.parse.ParseUser;
+import com.parse.ProgressCallback;
+import com.parse.SaveCallback;
 
 import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.hssf.usermodel.HSSFRow;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
-import org.json.JSONArray;
 
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-/**
- * Created by DHRUMESH on 7/23/2016.
- */
 public class Functions {
-    protected static ArrayList<String> SEMESTERS = new ArrayList<>(), BRANCHES = new ArrayList<>();
+    protected static ArrayList<String> SEMESTERS = new ArrayList<>(), BRANCHES = new ArrayList<>(), SEM_TEACHER = new ArrayList<>(), BRANCH_TEACHER = new ArrayList<>();
     protected static FragmentManager currentFragmentManager;
+    protected static int FILE_PICK_REQUEST_CODE = 11111;
     private static String TAG = InitClass.TAG;
     private static ProgressDialog dialog;
     private static View[] views;
@@ -88,11 +96,25 @@ public class Functions {
         });
     }
 
-    protected static void sendPush(String title, String message, JSONArray channels) {
-        Map<String, Object> pushDetails = new HashMap<>();
-        pushDetails.put("title", title);
-        pushDetails.put("message", message);
-        pushDetails.put("channels", channels);
+    protected static void sendNotification(String title, String message, List<String> channels) {
+        try {
+            Map<String, Object> params = new HashMap<>();
+            params.put("title", title);
+            params.put("message", message);
+            params.put("channels", channels);
+            ParseCloud.callFunctionInBackground("sendPush", params, new FunctionCallback<String>() {
+                @Override
+                public void done(String message, ParseException e) {
+                    if (e == null) {
+                        Log.d(TAG, "Function Call Success:" + message);
+                    } else {
+                        Log.e(TAG, "ERROR: " + message, e);
+                    }
+                }
+            });
+        } catch (Exception e) {
+            Log.e(TAG, "ERROR", e);
+        }
     }
 
     protected static void setFragment(FragmentManager fragmentManager,
@@ -188,28 +210,156 @@ public class Functions {
             }
         }.start();
     }
-    //For File Pick Dialog ...Add following to activity/fragment
 
-      /*  Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
-        intent.setType("application/*");
-        intent.addCategory(Intent.CATEGORY_OPENABLE);
-        startActivityForResult(intent, 5);*/
-    //And add following
-    /*
-
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (requestCode == 5) {
-            try {
-                String path = data.getData().getPath();
-                //String path="/data/data/tk.only5.quizapp/Questions.xls";
-                Log.d(TAG, "LOCATION:" + path);
-                Functions.readExcelFile(path, 10);
-            } catch (Exception e) {
-                Log.e(TAG, "Error", e);
-            }
-        }
+    protected static String getCurrentDateTime() {
+        DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm");
+        return dateFormat.format(new Date());
     }
-     */
+
+    protected static void uploadFile(String path, final String subject, final String sem, final String branch, final Activity activity, final ParseUser user, final ProgressDialog dialog) throws Exception {
+        final String fileName = path.substring(path.lastIndexOf('/') + 1).replace(" ", "_");
+        final String uploadedBy = user.getString("TEACHER_ID");
+        final String teacherName = user.getString("FIRST_NAME") + " " + user.getString("LAST_NAME");
+        Log.d(TAG, fileName);
+        dialog.setMessage(fileName);
+        FileInputStream fis = new FileInputStream(new File(path));
+        Log.d(TAG, "FILE SIZE:" + (((double) fis.getChannel().size()) / (1024 * 1024)) + " MB");
+        byte[] file = new byte[(int) fis.getChannel().size()];
+        fis.read(file);
+        final ParseFile parseFile = new ParseFile(fileName, file);
+        Log.d(TAG, "FILE_UPLOAD_STARTED:" + path);
+        parseFile.saveInBackground(new SaveCallback() {
+            @Override
+            public void done(ParseException e) {
+                if (e == null) {
+                    Log.d(TAG, "FILE UPLOADED:" + parseFile.getUrl());
+                    ParseObject uploadDoc = new ParseObject("UploadedFiles");
+                    uploadDoc.put("NAME", fileName);
+                    uploadDoc.put("UPLOADED_BY", uploadedBy);
+                    uploadDoc.put("UPLOAD_DATE", getCurrentDateTime());
+                    uploadDoc.put("SUBJECT", subject);
+                    uploadDoc.put("BRANCH", branch);
+                    uploadDoc.put("SEMESTER", sem);
+                    uploadDoc.put("DOCUMENT", parseFile);
+                    uploadDoc.saveInBackground(new SaveCallback() {
+                        @Override
+                        public void done(ParseException e) {
+                            if (e == null) {
+                                Log.d(TAG, "FileObjectSaved");
+                                activity.runOnUiThread(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        Snackbar.make(activity.findViewById(R.id.fragmentContainerUser), "FILE UPLOADED:" + fileName, Snackbar.LENGTH_SHORT).show();
+                                    }
+                                });
+                                ParseQuery<ParseUser> query = ParseUser.getQuery();
+                                query.whereEqualTo("BRANCH", branch);
+                                query.whereEqualTo("SEMESTER", sem);
+                                query.whereEqualTo("POST", "Student");
+                                query.findInBackground(new FindCallback<ParseUser>() {
+                                    @Override
+                                    public void done(List<ParseUser> objects, ParseException e) {
+                                        List<String> channels = new ArrayList<String>();
+                                        if (e == null) {
+                                            String title = activity.getString(
+                                                    R.string.notification_title_note_uploaded);
+                                            String message = activity.getString(
+                                                    R.string.notification_message_note_uploaded)
+                                                    .replace("#TEACHER#", teacherName)
+                                                    .replace("#SUBJECT#", subject);
+                                            for (ParseUser user : objects) {
+                                                Log.d(TAG, user.getEmail());
+                                                channels.add(user.getString("ENROLLMENT"));
+                                            }
+                                            if (channels.size() > 0) {
+                                                sendNotification(title, message, channels);
+                                            }
+                                            addNotificationToList(title, message, channels, uploadedBy);
+                                        } else Log.e(TAG, "ERROR", e);
+                                    }
+                                });
+                            } else
+                                Log.e(TAG, "ERROR", e);
+                        }
+                    });
+                    dialog.dismiss();
+                } else {
+                    activity.runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            Snackbar.make(activity.findViewById(R.id.fragmentContainerUser), R.string.error_technical, Snackbar.LENGTH_LONG).show();
+                        }
+                    });
+                    dialog.dismiss();
+                    Log.e(TAG, "ERROR:", e);
+                }
+                // dialog.dismiss();
+            }
+        }, new ProgressCallback() {
+            @Override
+            public void done(Integer percentDone) {
+                Log.d(TAG, "FILE_UPLOAD_" + fileName + ":" + percentDone + "%");
+                dialog.setProgress(percentDone);
+            }
+        });
+    }
+
+    protected static void addNotificationToList(String title, String message, List<String> sentTo, String sentBy) {
+        ParseObject notification = new ParseObject("Notification");
+        notification.put("TITLE", title);
+        notification.put("MESSAGE", message);
+        notification.put("DATE_TIME", getCurrentDateTime());
+        notification.put("SENT_TO", sentTo);
+        notification.put("SENT_BY", sentBy);
+        notification.saveInBackground(new SaveCallback() {
+            @Override
+            public void done(ParseException e) {
+                if (e == null) Log.d(TAG, "NOTIFICATION ADDED!");
+                else Log.e(TAG, "ERROR", e);
+            }
+        });
+    }
+    protected static void getTeacherClassSubjects(String teacherID) {
+        final ArrayList<ExtraDetailsTeacherClassSubject> classSubjects = new ArrayList<>();
+        ParseQuery<ParseUser> query = ParseUser.getQuery();
+        query.whereEqualTo("TEACHER_ID", teacherID);
+        query.findInBackground(new FindCallback<ParseUser>() {
+            @Override
+            public void done(final List<ParseUser> objects, ParseException e) {
+                if (e == null) {
+                    new Thread() {
+                        @Override
+                        public void run() {
+                            for (int i = 0; i < objects.size(); i++) {
+                                try {
+                                    Log.d(TAG, "Number of Users : " + objects.size());
+                                    ArrayList<HashMap> arrayList = (ArrayList<HashMap>) objects.get(i).get("CLASS_SUBJECT");
+                                    for (int j = 0; j < arrayList.size(); j++) {
+                                        Log.d(TAG, "NUMBER of Classes:" + arrayList.size());
+                                        classSubjects.add(new ExtraDetailsTeacherClassSubject(arrayList.get(j)));
+                                        //return classSubjects;
+                                    }
+                                    for (int k = 0; k < classSubjects.size(); k++) {
+                                        Log.d(TAG, classSubjects.get(k).getSemItem() + " " + classSubjects.get(k).getBranchItem());
+                                        if (!SEM_TEACHER.contains(classSubjects.get(k).getSemItem()))
+                                            SEM_TEACHER.add(classSubjects.get(k).getSemItem());
+                                        if (!BRANCH_TEACHER.contains(classSubjects.get(k).getBranchItem()))
+                                            BRANCH_TEACHER.add(classSubjects.get(k).getBranchItem());
+                                    }
+                                } catch (Exception ex) {
+                                    Log.e(TAG, "ERROR", ex);
+                                }
+                            }
+                        }
+                    }.start();
+
+                } else {
+                    Log.e(TAG, "ERROR:", e);
+                }
+            }
+        });
+    }
+
+//    protected static void loadNotes(String sem,String branch,Activity activity,Ar)
 
 }

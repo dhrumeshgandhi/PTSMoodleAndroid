@@ -140,6 +140,10 @@ public class RegisterFragment extends Fragment implements RadioGroup.OnCheckedCh
                                         if (e == null) {
                                             Log.d(TAG, "SignUp Success");
                                             startActivity(new Intent(activity, UserFragmentActivity.class));
+                                            FragmentManager fragmentManager = getFragmentManager();
+                                            Log.d(TAG, "popping backstack");
+                                            fragmentManager.popBackStack();
+                                            activity.finish();
                                         } else {
                                             Log.e(TAG, "SignUp Failed", e);
                                             Snackbar.make(rootView, R.string.error_technical, Snackbar.LENGTH_LONG).show();
@@ -171,6 +175,10 @@ public class RegisterFragment extends Fragment implements RadioGroup.OnCheckedCh
                                         if (e == null) {
                                             Log.d(TAG, "SignUp Success");
                                             startActivity(new Intent(activity, UserFragmentActivity.class));
+                                            FragmentManager fragmentManager = getFragmentManager();
+                                            Log.d(TAG, "popping backstack");
+                                            fragmentManager.popBackStack();
+                                            activity.finish();
                                         } else {
                                             Log.e(TAG, "SignUp Failed", e);
                                             Snackbar.make(rootView, R.string.error_technical, Snackbar.LENGTH_LONG).show();
@@ -199,6 +207,10 @@ public class RegisterFragment extends Fragment implements RadioGroup.OnCheckedCh
                                         if (e == null) {
                                             Log.d(TAG, "SignUp Success");
                                             startActivity(new Intent(activity, UserFragmentActivity.class));
+                                            FragmentManager fragmentManager = getFragmentManager();
+                                            Log.d(TAG, "popping backstack");
+                                            fragmentManager.popBackStack();
+                                            activity.finish();
                                         } else {
                                             Log.e(TAG, "SignUp Failed", e);
                                             Snackbar.make(rootView, R.string.error_technical, Snackbar.LENGTH_LONG).show();
@@ -212,11 +224,6 @@ public class RegisterFragment extends Fragment implements RadioGroup.OnCheckedCh
                             }
                             break;
                     }
-
-                    FragmentManager fragmentManager = getFragmentManager();
-                    Log.d(TAG, "popping backstack");
-                    fragmentManager.popBackStack();
-                    activity.finish();
                 } else {
                     Log.e(TAG, "Passwords don't match!");
                     Snackbar.make(rootView, R.string.error_password_not_match, Snackbar.LENGTH_LONG).show();

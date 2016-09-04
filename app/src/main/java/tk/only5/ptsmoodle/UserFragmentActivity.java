@@ -9,6 +9,7 @@ import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -30,8 +31,10 @@ public class UserFragmentActivity extends AppCompatActivity implements View.OnCl
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
         loadingDialog = Functions.showLoading(activity, "Please Wait!");
+        getWindow().setSoftInputMode(
+                WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN
+        );
         setContentView(R.layout.activity_user_fragment);
         final ParseUser user = ParseUser.getCurrentUser();
         if (user != null) {
@@ -47,6 +50,7 @@ public class UserFragmentActivity extends AppCompatActivity implements View.OnCl
                             else Log.e(TAG, "ERROR", e);
                             tvExtraDetail.setText(user.getString("TEACHER_ID"));
                             Functions.setFragment(getSupportFragmentManager(), new TeacherFragment(), "TEACHER_FRAGMENT", R.id.fragmentContainerUser, false);
+                            Functions.getTeacherClassSubjects(user.getString("TEACHER_ID"));
                         }
                     });
                     break;
@@ -83,11 +87,13 @@ public class UserFragmentActivity extends AppCompatActivity implements View.OnCl
         btnLogout = (Button) findViewById(R.id.btnLogout);
         btnLogout.setOnClickListener(this);
         rlUserFragemtnActivity = (RelativeLayout) findViewById(R.id.rlUserFragmentActivity);
+        super.onCreate(savedInstanceState);
     }
 
     @Override
     public void onClick(View view) {
         if (view.equals(btnLogout)) {
+            loadingDialog = Functions.showLoading(activity, "Logging Out!");
             ParseUser.logOutInBackground(new LogOutCallback() {
                 @Override
                 public void done(ParseException e) {
@@ -103,11 +109,13 @@ public class UserFragmentActivity extends AppCompatActivity implements View.OnCl
                         FragmentManager fragmentManager = getSupportFragmentManager();
                         Log.d(TAG, "popping backstack");
                         fragmentManager.popBackStack();
+                        loadingDialog.dismiss();
                         startActivity(new Intent(UserFragmentActivity.this, LoginSignUpFragmentActivity.class));
                         finish();
                     } else {
                         Log.e(TAG, "Logout Failed", e);
                         Snackbar.make(rlUserFragemtnActivity, R.string.error_technical, Snackbar.LENGTH_LONG).show();
+                        loadingDialog.dismiss();
                     }
                 }
             });
@@ -126,4 +134,5 @@ public class UserFragmentActivity extends AppCompatActivity implements View.OnCl
         }*/
         super.onBackPressed();
     }
+
 }

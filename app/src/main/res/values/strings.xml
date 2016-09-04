@@ -16,6 +16,12 @@
     <string name="label_student">Student</string>
     <string name="label_parent">Parent</string>
     <string name="tag_extra_details">EXTRA_DETAILS_OF</string>
-    <!-- TODO: Remove or change this placeholder text -->
+    <string name="notification_user_selection_choice">To whom you want to send notification?</string>
+    <string name="notification_title_note_uploaded">Notes Uploaded!!</string>
+    <string name="notification_message_note_uploaded">Note has been uploaded for #SUBJECT# by #TEACHER#</string>
+    <string-array name="notification_user_selection_list">
+        <item>Parent</item>
+        <item>Student</item>
+    </string-array>
     <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>
