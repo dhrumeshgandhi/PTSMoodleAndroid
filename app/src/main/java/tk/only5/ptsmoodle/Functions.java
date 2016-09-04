@@ -152,7 +152,7 @@ public class Functions {
                                             final SwipeRefreshLayout srlNotification) {
         srlNotification.setRefreshing(true);
         ParseQuery<ParseObject> query = ParseQuery.getQuery("Notification");
-        query.addDescendingOrder("updatedAt");
+        query.addDescendingOrder("DATE_TIME");
         query.whereEqualTo("SENT_TO", notificationFor);
         query.findInBackground(new FindCallback<ParseObject>() {
             @Override
@@ -223,11 +223,12 @@ public class Functions {
         Log.d(TAG, fileName);
         dialog.setMessage(fileName);
         FileInputStream fis = new FileInputStream(new File(path));
-        Log.d(TAG, "FILE SIZE:" + (((double) fis.getChannel().size()) / (1024 * 1024)) + " MB");
+        Log.d(TAG, "FILE SIZE:" + (((double) fis.getChannel().size()) / 1024) + " KB");
         byte[] file = new byte[(int) fis.getChannel().size()];
         fis.read(file);
         final ParseFile parseFile = new ParseFile(fileName, file);
         Log.d(TAG, "FILE_UPLOAD_STARTED:" + path);
+        fis.close();
         parseFile.saveInBackground(new SaveCallback() {
             @Override
             public void done(ParseException e) {
@@ -319,6 +320,7 @@ public class Functions {
             }
         });
     }
+
     protected static void getTeacherClassSubjects(String teacherID) {
         final ArrayList<ExtraDetailsTeacherClassSubject> classSubjects = new ArrayList<>();
         ParseQuery<ParseUser> query = ParseUser.getQuery();
@@ -360,6 +362,51 @@ public class Functions {
         });
     }
 
-//    protected static void loadNotes(String sem,String branch,Activity activity,Ar)
+    protected static void loadNotes(String sem, String branch, final Activity activity,
+                                    final ArrayList<Notes> notesList, final NotesListAdapter notesListAdapter,
+                                    final SwipeRefreshLayout srlNotes) {
+        srlNotes.setRefreshing(true);
+        ParseQuery<ParseObject> query = ParseQuery.getQuery("UploadedFiles");
+        query.whereEqualTo("SEMESTER", sem);
+        query.whereEqualTo("BRANCH", branch);
+        query.addDescendingOrder("UPLOAD_DATE");
+        query.findInBackground(new FindCallback<ParseObject>() {
+            @Override
+            public void done(final List<ParseObject> objects, ParseException e) {
+                if (e == null) {
+                    Log.d(TAG, "Query successful");
+                    activity.runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            notesList.clear();
+                            notesListAdapter.notifyDataSetChanged();
+                            for (final ParseObject object : objects) {
+
+                                ParseQuery<ParseUser> userQuery = ParseUser.getQuery();
+                                userQuery.whereEqualTo("TEACHER_ID", object.getString("UPLOADED_BY"));
+                                try {
+                                    ParseUser teacher = userQuery.getFirst();
+                                    String teacherName =
+                                            teacher.getString("FIRST_NAME") + " " +
+                                                    teacher.getString("LAST_NAME");
+                                    notesList.add(new Notes(object.getString("NAME"),
+                                            teacherName, object.getString("UPLOAD_DATE"),
+                                            object.getString("SUBJECT"), object.getParseFile("DOCUMENT")));
+                                    notesListAdapter.notifyDataSetChanged();
+                                } catch (Exception e) {
+                                    Log.e(TAG, "ERROR", e);
+                                }
+                                srlNotes.setRefreshing(false);
+                            }
+                        }
+                    });
+                } else {
+                    Log.e(TAG, "Query Unsuccessful", e);
+                    srlNotes.setRefreshing(false);
+                }
+            }
+        });
+
+    }
 
 }

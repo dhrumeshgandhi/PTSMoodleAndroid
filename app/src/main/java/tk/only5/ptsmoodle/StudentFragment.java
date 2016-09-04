@@ -18,8 +18,9 @@ public class StudentFragment extends Fragment implements View.OnClickListener {
     private View rootView;
     private Activity activity;
     private String TAG = InitClass.TAG;
-    private Button btnNotifications;
+    private Button btnNotifications, btnNotes;
     private ParseUser user;
+    private Bundle data;
 
     @Nullable
     @Override
@@ -29,7 +30,9 @@ public class StudentFragment extends Fragment implements View.OnClickListener {
         activity.setTitle("Student");
         user = ParseUser.getCurrentUser();
         btnNotifications = (Button) rootView.findViewById(R.id.btnNotifications);
+        btnNotes = (Button) rootView.findViewById(R.id.btnNotes);
         btnNotifications.setOnClickListener(this);
+        btnNotes.setOnClickListener(this);
         return rootView;
     }
 
@@ -37,10 +40,17 @@ public class StudentFragment extends Fragment implements View.OnClickListener {
     public void onClick(View view) {
         if (view.equals(btnNotifications)) {
             NotificationFragment notificationFragment = new NotificationFragment();
-            Bundle data = new Bundle();
+            data = new Bundle();
             data.putString("NOTIFICATION_FOR", user.getString("ENROLLMENT"));
             notificationFragment.setArguments(data);
             Functions.setFragment(null, notificationFragment, "NOTIFICATION_FRAGMENT", R.id.fragmentContainerUser, true);
+        } else if (view.equals(btnNotes)) {
+            NotesFragment notesFragment = new NotesFragment();
+            data = new Bundle();
+            data.putString("SEM", user.getString("SEMESTER"));
+            data.putString("BRANCH", user.getString("BRANCH"));
+            notesFragment.setArguments(data);
+            Functions.setFragment(null, notesFragment, "NOTES_FRAGMENT", R.id.fragmentContainerUser, true);
         }
     }
 }

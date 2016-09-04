@@ -1,16 +1,32 @@
 package tk.only5.ptsmoodle;
 
+import com.parse.ParseFile;
+
 /**
  * Created by DHRUMESH on 9/4/2016.
  */
 public class Notes {
-    private String name, uploaded_by, upload_date, subject;
 
-    public Notes(String name, String uploaded_by, String upload_date, String subject) {
+    private String name;
+    private String uploaded_by;
+    private String upload_date;
+    private String subject;
+    private ParseFile file;
+
+    public Notes(String name, String uploaded_by, String upload_date, String subject, ParseFile file) {
         this.name = name;
         this.uploaded_by = uploaded_by;
         this.upload_date = upload_date;
         this.subject = subject;
+        this.file = file;
+    }
+
+    public ParseFile getFile() {
+        return file;
+    }
+
+    public void setFile(ParseFile file) {
+        this.file = file;
     }
 
     public String getName() {

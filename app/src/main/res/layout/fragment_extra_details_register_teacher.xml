@@ -27,7 +27,9 @@
             android:id="@+id/lvTeacherExtraDetailsClassSubjects"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_below="@id/tilTeacherExtraDetailsId" />
+            android:layout_below="@id/tilTeacherExtraDetailsId"
+            android:divider="@color/list_separator"
+            android:dividerHeight="1px" />
 
         <android.support.design.widget.FloatingActionButton
             android:id="@+id/fabTeacherExtraDetailsAddClassSubject"
