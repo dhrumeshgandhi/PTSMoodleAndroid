@@ -38,6 +38,7 @@ public class NotificationFragment extends Fragment implements SwipeRefreshLayout
         lvNotification.setAdapter(notificationListAdapter);
         notificationListAdapter.notifyDataSetChanged();
         srlNotification = (SwipeRefreshLayout) rootView.findViewById(R.id.srlNotification);
+        srlNotification.setColorSchemeResources(R.color.swipe_refresh_color);
         srlNotification.setOnRefreshListener(this);
         Functions.loadNotifications(notificationFor, activity, notificationList,
                 notificationListAdapter, srlNotification);
@@ -49,4 +50,5 @@ public class NotificationFragment extends Fragment implements SwipeRefreshLayout
         Functions.loadNotifications(notificationFor, activity, notificationList,
                 notificationListAdapter, srlNotification);
     }
+
 }

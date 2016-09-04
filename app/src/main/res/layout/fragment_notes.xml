@@ -3,7 +3,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/background"
-    tools:context=".NotificationFragment">
+    tools:context=".NotesFragment">
 
     <RelativeLayout
         android:layout_width="match_parent"
@@ -20,14 +20,14 @@
             android:background="@color/colorPrimary" />
 
         <android.support.v4.widget.SwipeRefreshLayout
-            android:id="@+id/srlNotification"
+            android:id="@+id/srlNotes"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_below="@+id/line0"
             android:layout_marginTop="10dp">
 
             <ListView
-                android:id="@+id/lvNotification"
+                android:id="@+id/lvNotes"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:divider="@color/list_separator"
