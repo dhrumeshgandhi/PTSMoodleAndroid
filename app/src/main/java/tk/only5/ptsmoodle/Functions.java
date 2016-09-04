@@ -20,6 +20,7 @@ import com.parse.ParseException;
 import com.parse.ParseFile;
 import com.parse.ParseObject;
 import com.parse.ParseQuery;
+import com.parse.ParseUser;
 import com.parse.ProgressCallback;
 import com.parse.SaveCallback;
 
@@ -40,11 +41,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-/**
- * Created by DHRUMESH on 7/23/2016.
- */
 public class Functions {
-    protected static ArrayList<String> SEMESTERS = new ArrayList<>(), BRANCHES = new ArrayList<>();
+    protected static ArrayList<String> SEMESTERS = new ArrayList<>(), BRANCHES = new ArrayList<>(), SEM_TEACHER = new ArrayList<>(), BRANCH_TEACHER = new ArrayList<>();
     protected static FragmentManager currentFragmentManager;
     protected static int FILE_PICK_REQUEST_CODE = 11111;
     private static String TAG = InitClass.TAG;
@@ -218,7 +216,7 @@ public class Functions {
         return dateFormat.format(new Date());
     }
 
-    protected static void uploadFile(String path, final String topic, final Activity activity, final String uploadedBy, final ProgressDialog dialog) throws Exception {
+    protected static void uploadFile(String path, final String subject, final String sem, final String branch, final Activity activity, final String uploadedBy, final ProgressDialog dialog) throws Exception {
         final String fileName = path.substring(path.lastIndexOf('/') + 1).replace(" ", "_");
         Log.d(TAG, fileName);
         dialog.setMessage(fileName);
@@ -236,7 +234,9 @@ public class Functions {
                     uploadDoc.put("NAME", fileName);
                     uploadDoc.put("UPLOADED_BY", uploadedBy);
                     uploadDoc.put("UPLOAD_DATE", getCurrentDateTime());
-                    uploadDoc.put("TOPIC", topic);
+                    uploadDoc.put("SUBJECT", subject);
+                    uploadDoc.put("BRANCH", branch);
+                    uploadDoc.put("SEMESTER", sem);
                     uploadDoc.put("DOCUMENT", parseFile);
                     uploadDoc.saveInBackground(new SaveCallback() {
                         @Override
@@ -274,28 +274,46 @@ public class Functions {
             }
         });
     }
-    //For File Pick Dialog ...Add following to activity/fragment
 
-      /*  Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
-        intent.setType("application/*");
-        intent.addCategory(Intent.CATEGORY_OPENABLE);
-        startActivityForResult(intent, 5);*/
-    //And add following
-    /*
+    protected static void getTeacherClassSubjects(String teacherID) {
+        final ArrayList<ExtraDetailsTeacherClassSubject> classSubjects = new ArrayList<>();
+        ParseQuery<ParseUser> query = ParseUser.getQuery();
+        query.whereEqualTo("TEACHER_ID", teacherID);
+        query.findInBackground(new FindCallback<ParseUser>() {
+            @Override
+            public void done(final List<ParseUser> objects, ParseException e) {
+                if (e == null) {
+                    new Thread() {
+                        @Override
+                        public void run() {
+                            for (int i = 0; i < objects.size(); i++) {
+                                try {
+                                    Log.d(TAG, "Number of Users : " + objects.size());
+                                    ArrayList<HashMap> arrayList = (ArrayList<HashMap>) objects.get(i).get("CLASS_SUBJECT");
+                                    for (int j = 0; j < arrayList.size(); j++) {
+                                        Log.d(TAG, "NUMBER of Classes:" + arrayList.size());
+                                        classSubjects.add(new ExtraDetailsTeacherClassSubject(arrayList.get(j)));
+                                        //return classSubjects;
+                                    }
+                                    for (int k = 0; k < classSubjects.size(); k++) {
+                                        Log.d(TAG, classSubjects.get(k).getSemItem() + " " + classSubjects.get(k).getBranchItem());
+                                        if (!SEM_TEACHER.contains(classSubjects.get(k).getSemItem()))
+                                            SEM_TEACHER.add(classSubjects.get(k).getSemItem());
+                                        if (!BRANCH_TEACHER.contains(classSubjects.get(k).getBranchItem()))
+                                            BRANCH_TEACHER.add(classSubjects.get(k).getBranchItem());
+                                    }
+                                } catch (Exception ex) {
+                                    Log.e(TAG, "ERROR", ex);
+                                }
+                            }
+                        }
+                    }.start();
 
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (requestCode == 5) {
-            try {
-                String path = data.getData().getPath();
-                //String path="/data/data/tk.only5.quizapp/Questions.xls";
-                Log.d(TAG, "LOCATION:" + path);
-                Functions.readExcelFile(path, 10);
-            } catch (Exception e) {
-                Log.e(TAG, "Error", e);
+                } else {
+                    Log.e(TAG, "ERROR:", e);
+                }
             }
-        }
+        });
     }
-     */
 
 }

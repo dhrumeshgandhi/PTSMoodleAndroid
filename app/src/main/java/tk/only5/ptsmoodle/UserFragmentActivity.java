@@ -31,7 +31,6 @@ public class UserFragmentActivity extends AppCompatActivity implements View.OnCl
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
         loadingDialog = Functions.showLoading(activity, "Please Wait!");
         getWindow().setSoftInputMode(
                 WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN
@@ -51,6 +50,7 @@ public class UserFragmentActivity extends AppCompatActivity implements View.OnCl
                             else Log.e(TAG, "ERROR", e);
                             tvExtraDetail.setText(user.getString("TEACHER_ID"));
                             Functions.setFragment(getSupportFragmentManager(), new TeacherFragment(), "TEACHER_FRAGMENT", R.id.fragmentContainerUser, false);
+                            Functions.getTeacherClassSubjects(user.getString("TEACHER_ID"));
                         }
                     });
                     break;
@@ -87,6 +87,7 @@ public class UserFragmentActivity extends AppCompatActivity implements View.OnCl
         btnLogout = (Button) findViewById(R.id.btnLogout);
         btnLogout.setOnClickListener(this);
         rlUserFragemtnActivity = (RelativeLayout) findViewById(R.id.rlUserFragmentActivity);
+        super.onCreate(savedInstanceState);
     }
 
     @Override

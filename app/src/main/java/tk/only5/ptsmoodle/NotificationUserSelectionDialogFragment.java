@@ -29,6 +29,7 @@ public class NotificationUserSelectionDialogFragment extends DialogFragment impl
         rootView = inflater.inflate(R.layout.fragment_notification_user_selection_dialog_fragement, container, false);
         activity = getActivity();
         //getDialog().setTitle("Send Notification");
+        // Functions.sendNotification("Test", "Hello", Arrays.asList("13012011012", "TEST"));
         user = ParseUser.getCurrentUser();
         btnNext = (Button) rootView.findViewById(R.id.btnNext);
         btnPrevious = (Button) rootView.findViewById(R.id.btnPrevious);

@@ -10,8 +10,10 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Spinner;
 
 import com.github.angads25.filepicker.controller.DialogSelectionListener;
 import com.github.angads25.filepicker.model.DialogConfigs;
@@ -23,7 +25,7 @@ import java.io.File;
 
 public class TeacherFragment extends Fragment implements View.OnClickListener {
 
-    private static String topic = "";
+    private static String subject = "", branch = "", sem = "";
     private static String TAG = InitClass.TAG;
     private static ProgressDialog dialog;
     private static ParseUser user;
@@ -47,37 +49,46 @@ public class TeacherFragment extends Fragment implements View.OnClickListener {
     @Override
     public void onClick(View view) {
         if (view.equals(btnSendNotification)) {
-            // Functions.sendNotification("Test", "Hello", Arrays.asList("13012011012", "TEST"));
             NotificationUserSelectionDialogFragment selectionDialogFragement = new NotificationUserSelectionDialogFragment();
             selectionDialogFragement.setCancelable(false);
             selectionDialogFragement.show(getFragmentManager(), "SELECTION_DIALOG");
         } else if (view.equals(btnUploadNotes)) {
-            topic = "";
+            subject = "";
             new GetTopicDialogFragment().show(getFragmentManager(), "TOPIC_DIALOG");
-
         }
     }
 
     public static class GetTopicDialogFragment extends DialogFragment {
         private View rootView;
         private Activity activity;
-        private EditText etTopic;
+        private EditText etSubject;
+        private Spinner spinSem, spinBranch;
         private Button btnNext;
+        private ArrayAdapter<String> semAdapter, branchAdapter;
 
         @Nullable
         @Override
         public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-            rootView = inflater.inflate(R.layout.dialog_file_upload_get_topic, container, false);
+            rootView = inflater.inflate(R.layout.dialog_file_upload_info, container, false);
             activity = getActivity();
-            getDialog().setTitle("Topic");
-            etTopic = (EditText) rootView.findViewById(R.id.etTopic);
+            getDialog().setTitle("Document Info");
+            etSubject = (EditText) rootView.findViewById(R.id.etSubejct);
+            spinBranch = (Spinner) rootView.findViewById(R.id.spinBranch);
+            spinSem = (Spinner) rootView.findViewById(R.id.spinSem);
+            semAdapter = new ArrayAdapter<>(activity, android.R.layout.simple_spinner_dropdown_item, Functions.SEM_TEACHER);
+            spinSem.setAdapter(semAdapter);
+            semAdapter.notifyDataSetChanged();
+            branchAdapter = new ArrayAdapter<>(activity, android.R.layout.simple_spinner_dropdown_item, Functions.BRANCH_TEACHER);
+            spinBranch.setAdapter(branchAdapter);
+            branchAdapter.notifyDataSetChanged();
             btnNext = (Button) rootView.findViewById(R.id.btnNext);
             btnNext.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    topic = etTopic.getText().toString();
-                    if (topic.isEmpty()) topic = "";
-                    if (!topic.isEmpty()) {
+                    subject = etSubject.getText().toString();
+                    branch = spinBranch.getSelectedItem().toString();
+                    sem = spinSem.getSelectedItem().toString();
+                    if (!subject.isEmpty()) {
                         dialog = new ProgressDialog(activity);
                         dialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
                         dialog.setTitle("Uploading File!");
@@ -100,7 +111,7 @@ public class TeacherFragment extends Fragment implements View.OnClickListener {
                                     public void run() {
                                         try {
                                             Log.d(TAG, "UPLOADING FILE:" + files[0]);
-                                            Functions.uploadFile(files[0], topic, activity, user.getString("TEACHER_ID"), dialog);
+                                            Functions.uploadFile(files[0], subject, sem, branch, activity, user.getString("TEACHER_ID"), dialog);
                                         } catch (Exception e) {
                                             Log.e(TAG, "Error", e);
                                         }

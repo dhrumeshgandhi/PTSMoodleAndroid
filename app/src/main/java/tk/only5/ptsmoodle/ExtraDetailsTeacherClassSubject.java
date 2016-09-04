@@ -4,6 +4,8 @@ import android.util.Log;
 
 import org.json.JSONObject;
 
+import java.util.HashMap;
+
 /**
  * Created by DHRUMESH on 8/2/2016.
  */
@@ -14,6 +16,16 @@ public class ExtraDetailsTeacherClassSubject {
         this.branchItem = branchItem;
         this.subjectItem = subjectItem;
         this.semItem = semItem;
+    }
+
+    public ExtraDetailsTeacherClassSubject(HashMap<String, String> hashMap) {
+        try {
+            this.semItem = hashMap.get("SEM");
+            this.branchItem = hashMap.get("BRANCH");
+            this.subjectItem = hashMap.get("SUBJECT");
+        } catch (Exception e) {
+            Log.e(InitClass.TAG, "ERROR", e);
+        }
     }
 
     public String getBranchItem() {
