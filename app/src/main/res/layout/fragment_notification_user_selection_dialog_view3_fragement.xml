@@ -1,0 +1,40 @@
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".NotificationUserSelectionDialogViewsFragement">
+
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_margin="10dp">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentTop="true">
+
+            <TextView
+                android:id="@+id/tvNotificationSentLabel"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="15dp"
+                android:text="Notification Sent to Following Students:"
+                android:textSize="20sp" />
+
+            <TextView
+                android:id="@+id/tvStudentList"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/tvNotificationSentLabel"
+                android:layout_marginLeft="50dp"
+                android:layout_marginTop="15dp"
+                android:text="Enrollments"
+                android:textSize="15sp" />
+        </RelativeLayout>
+
+    </ScrollView>
+
+</FrameLayout>

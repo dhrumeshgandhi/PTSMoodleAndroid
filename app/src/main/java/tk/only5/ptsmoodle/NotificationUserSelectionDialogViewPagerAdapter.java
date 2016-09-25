@@ -10,17 +10,39 @@ import android.support.v4.app.FragmentStatePagerAdapter;
  */
 public class NotificationUserSelectionDialogViewPagerAdapter extends FragmentStatePagerAdapter {
 
+    NotificationUserSelectionDialogViewsFragement
+            notificationUserSelectionDialogViewsFragement;
+    Bundle bundle;
+
     public NotificationUserSelectionDialogViewPagerAdapter(FragmentManager fm) {
         super(fm);
     }
 
     @Override
     public Fragment getItem(int position) {
-        NotificationUserSelectionDialogViewsFragement
-                notificationUserSelectionDialogViewsFragement
-                = new NotificationUserSelectionDialogViewsFragement();
-        Bundle bundle = new Bundle();
-        bundle.putInt("POS", position);
+        switch (position) {
+            case 0:
+                notificationUserSelectionDialogViewsFragement = new NotificationUserSelectionDialogViewsFragement();
+                bundle = new Bundle();
+                bundle.putInt("POS", position);
+                //  NotificationUserSelectionDialogFragment.fabPrevious.setVisibility(View.INVISIBLE);
+                //   NotificationUserSelectionDialogFragment.fabNext.setVisibility(View.VISIBLE);
+                break;
+            case 1:
+                notificationUserSelectionDialogViewsFragement = new NotificationUserSelectionDialogViewsFragement();
+                bundle = new Bundle();
+                bundle.putInt("POS", position);
+                //    NotificationUserSelectionDialogFragment.fabPrevious.setVisibility(View.VISIBLE);
+                //    NotificationUserSelectionDialogFragment.fabNext.setVisibility(View.VISIBLE);
+                break;
+            case 2:
+                notificationUserSelectionDialogViewsFragement = new NotificationUserSelectionDialogViewsFragement();
+                bundle = new Bundle();
+                bundle.putInt("POS", position);
+                //    NotificationUserSelectionDialogFragment.fabNext.setVisibility(View.INVISIBLE);
+                //   NotificationUserSelectionDialogFragment.fabPrevious.setVisibility(View.VISIBLE);
+                break;
+        }
         notificationUserSelectionDialogViewsFragement.setArguments(bundle);
         return notificationUserSelectionDialogViewsFragement;
     }

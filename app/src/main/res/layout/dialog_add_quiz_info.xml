@@ -1,0 +1,89 @@
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_margin="5dp">
+
+        <EditText
+            android:id="@+id/etQuizName"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentTop="true"
+            android:layout_marginTop="38dp"
+            android:hint="Quiz Name" />
+
+        <EditText
+            android:id="@+id/etSub"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentStart="true"
+            android:layout_below="@+id/etQuizName"
+            android:layout_marginTop="15dp"
+            android:hint="Subject" />
+
+        <EditText
+            android:id="@+id/etNoOfQue"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
+            android:layout_below="@+id/etSub"
+            android:layout_marginTop="15dp"
+            android:gravity="center"
+            android:hint="No. of Questions"
+            android:inputType="numberSigned" />
+
+        <EditText
+            android:id="@+id/etPositive"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
+            android:layout_alignTop="@+id/etNegative"
+            android:gravity="center"
+            android:hint="Positive Marks"
+            android:inputType="numberDecimal" />
+
+        <EditText
+            android:id="@+id/etNegative"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentRight="true"
+            android:layout_below="@+id/etTimeLimit"
+            android:layout_marginTop="15dp"
+            android:gravity="center"
+            android:hint="Negative Marks"
+            android:inputType="numberDecimal" />
+
+        <EditText
+            android:id="@+id/etTimeLimit"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignEnd="@+id/etSub"
+            android:layout_alignRight="@+id/etSub"
+            android:layout_alignTop="@+id/etNoOfQue"
+            android:gravity="center"
+            android:hint="Time Limit(Min)"
+            android:inputType="numberSigned" />
+
+        <android.support.design.widget.FloatingActionButton
+            android:id="@+id/fabAddQuiz"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_centerHorizontal="true"
+            android:layout_marginBottom="62dp"
+            android:src="@drawable/right_arrow_512" />
+    </RelativeLayout>
+</FrameLayout>

@@ -6,25 +6,76 @@
 
     <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:layout_margin="10dp">
 
+        <android.support.design.widget.TextInputLayout
+            android:id="@+id/tilNotificationTitle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="25dp"
+            android:hint="Title">
+
+            <EditText
+                android:id="@+id/etNotificationTitle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="text" />
+        </android.support.design.widget.TextInputLayout>
+
+        <android.support.design.widget.TextInputLayout
+            android:id="@+id/tilNotificationMessage"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/tilNotificationTitle"
+            android:layout_marginTop="25dp"
+            android:hint="Message">
+
+            <EditText
+                android:id="@+id/etNotificationMessage"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="text" />
+        </android.support.design.widget.TextInputLayout>
         <TextView
-            android:id="@+id/tvUserSelection"
+            android:id="@+id/tvSem"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignParentTop="true"
-            android:layout_centerHorizontal="true"
-            android:layout_marginTop="77dp"
-            android:gravity="center"
-            android:text="@string/notification_user_selection_choice"
-            android:textSize="20sp" />
+            android:layout_below="@id/tilNotificationMessage"
+            android:layout_marginTop="40dp"
+            android:hint="Semester:"
+            android:textSize="20dp" />
 
         <Spinner
-            android:id="@+id/spinUserSelection"
+            android:id="@+id/spinSem"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_below="@+id/tvUserSelection"
-            android:layout_centerHorizontal="true"
-            android:layout_marginTop="57dp" />
+            android:layout_below="@id/tilNotificationMessage"
+            android:layout_marginTop="31dp"
+            android:layout_toRightOf="@id/tvSem"
+            android:contentDescription="@string/label_login"
+            android:spinnerMode="dialog" />
+
+        <TextView
+            android:id="@+id/tvBranch"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/tilNotificationMessage"
+            android:layout_marginLeft="8dp"
+            android:layout_marginTop="40dp"
+            android:layout_toRightOf="@id/spinSem"
+            android:hint="Branch:"
+            android:textSize="20dp" />
+
+        <Spinner
+            android:id="@+id/spinBranch"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/tilNotificationMessage"
+            android:layout_marginTop="31dp"
+            android:layout_toRightOf="@id/tvBranch"
+            android:gravity="center"
+            android:spinnerMode="dialog" />
+
     </RelativeLayout>
 </FrameLayout>

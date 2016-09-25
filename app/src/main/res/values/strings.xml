@@ -18,7 +18,9 @@
     <string name="tag_extra_details">EXTRA_DETAILS_OF</string>
     <string name="notification_user_selection_choice">To whom you want to send notification?</string>
     <string name="notification_title_note_uploaded">Notes Uploaded!!</string>
+    <string name="notification_title_quiz_uploaded">Quiz Uploaded!!</string>
     <string name="notification_message_note_uploaded">Note has been uploaded for #SUBJECT# by #TEACHER#</string>
+    <string name="notification_message_quiz_uploaded">Quiz(#NAME#) has been uploaded for #SUBJECT# by #TEACHER#</string>
     <string-array name="notification_user_selection_list">
         <item>Parent</item>
         <item>Student</item>

@@ -28,6 +28,8 @@ import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.hssf.usermodel.HSSFRow;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.json.JSONArray;
+import org.json.JSONObject;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -44,7 +46,6 @@ import java.util.Map;
 public class Functions {
     protected static ArrayList<String> SEMESTERS = new ArrayList<>(), BRANCHES = new ArrayList<>(), SEM_TEACHER = new ArrayList<>(), BRANCH_TEACHER = new ArrayList<>();
     protected static FragmentManager currentFragmentManager;
-    protected static int FILE_PICK_REQUEST_CODE = 11111;
     private static String TAG = InitClass.TAG;
     private static ProgressDialog dialog;
     private static View[] views;
@@ -178,45 +179,15 @@ public class Functions {
         });
     }
 
-    protected static void readExcelFile(final String path, final int noOfQues) {
-        new Thread() {
-            @Override
-            public void run() {
-                int cells = 0, rows = 0;
-                try {
-                    InputStream excelFile = new FileInputStream(path);
-                    HSSFWorkbook workbook = new HSSFWorkbook(excelFile);
-                    HSSFSheet sheet = workbook.getSheetAt(0);
-                    Iterator rowIterator = sheet.rowIterator();
-                    Iterator cellIterator;
-                    HSSFRow row;
-                    HSSFCell cell;
-                    if (rowIterator.hasNext()) {
-                        rowIterator.next();
-                        while (rowIterator.hasNext() && rows < noOfQues) {
-                            cells = 0;
-                            rows++;
-                            row = (HSSFRow) rowIterator.next();
-                            cellIterator = row.cellIterator();
-                            while (cellIterator.hasNext() && cells < 6) {
-                                cell = (HSSFCell) cellIterator.next();
-                                Log.d(TAG, "CELL :" + cell.toString());
-                            }
-                        }
-                    }
-                } catch (Exception e) {
-                    Log.e(TAG, "Error", e);
-                }
-            }
-        }.start();
-    }
-
     protected static String getCurrentDateTime() {
         DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm");
         return dateFormat.format(new Date());
     }
 
-    protected static void uploadFile(String path, final String subject, final String sem, final String branch, final Activity activity, final ParseUser user, final ProgressDialog dialog) throws Exception {
+    protected static void uploadFile(String path, final String subject, final String sem,
+                                     final String branch, final Activity activity,
+                                     final ParseUser user, final ProgressDialog dialog)
+            throws Exception {
         final String fileName = path.substring(path.lastIndexOf('/') + 1).replace(" ", "_");
         final String uploadedBy = user.getString("TEACHER_ID");
         final String teacherName = user.getString("FIRST_NAME") + " " + user.getString("LAST_NAME");
@@ -409,4 +380,125 @@ public class Functions {
 
     }
 
+    protected static JSONArray getQuestionsInJson(ArrayList<Question> queList) {
+        String id;
+        JSONArray questions = new JSONArray();
+        JSONObject question;
+        try {
+            for (int i = 0; i < queList.size(); i++) {
+                id = (i + 1) + "";
+                question = new JSONObject();
+                question.put("ID", id);
+                question.put("QUESTION", queList.get(i).getQue());
+                question.put("ANSWER", queList.get(i).getAns());
+                question.put("OPTION1", queList.get(i).getOpt1());
+                question.put("OPTION2", queList.get(i).getOpt2());
+                question.put("OPTION3", queList.get(i).getOpt3());
+                questions.put(i, question);
+                question = new JSONObject();
+            }
+        } catch (Exception e) {
+            Log.e(TAG, "Error", e);
+        }
+        Log.d(TAG, questions.toString());
+        return questions;
+    }
+
+    protected static void readExcelFile(final Activity activity, final String path, final Quiz quizData) {
+        final ArrayList<Question> quesList = new ArrayList<>();
+        new Thread() {
+            @Override
+            public void run() {
+                int cells = 0, rows = 0;
+                try {
+                    InputStream excelFile = new FileInputStream(path);
+                    HSSFWorkbook workbook = new HSSFWorkbook(excelFile);
+                    HSSFSheet sheet = workbook.getSheetAt(0);
+                    Iterator rowIterator = sheet.rowIterator();
+                    Iterator cellIterator;
+                    HSSFRow row;
+                    HSSFCell cell;
+                    String[] que;
+                    if (rowIterator.hasNext()) {
+                        rowIterator.next();
+                        while (rowIterator.hasNext() && rows < sheet.getLastRowNum()) {
+                            cells = 0;
+                            rows++;
+                            row = (HSSFRow) rowIterator.next();
+                            que = new String[6];
+                            cellIterator = row.cellIterator();
+                            while (cellIterator.hasNext() && cells < 6) {
+                                cell = (HSSFCell) cellIterator.next();
+                                que[cells++] = cell.toString();
+                                // Log.d(TAG, "CELL :" + cell.toString());
+                            }
+                            quesList.add(new Question(que[1], que[2], que[3], que[4], que[5], que[0]));
+                        }
+
+                        JSONArray jsonQues = getQuestionsInJson(quesList);
+                        uploadQuiz(activity, quizData, jsonQues);
+                    }
+                } catch (Exception e) {
+                    Log.e(TAG, "Error", e);
+                }
+            }
+        }.start();
+    }
+
+    private static void uploadQuiz(final Activity activity, final Quiz quizData, JSONArray jsonQues) {
+        final ParseObject quiz = new ParseObject("Quiz");
+        quiz.put("NAME", quizData.getName());
+        quiz.put("SUBJECT", quizData.getSubject());
+        quiz.put("NO_OF_QUESTIONS", quizData.getNo_of_ques());
+        quiz.put("POSITIVE_MARKS", quizData.getPositive_marks());
+        quiz.put("NEGATIVE_MARKS", quizData.getNegative_marks());
+        quiz.put("TIME_LIMIT", quizData.getTime_limit());
+        quiz.put("TEACHER_ID", quizData.getTeacher_id());
+        quiz.put("BRANCH", quizData.getBranch());
+        quiz.put("SEMESTER", quizData.getSem());
+        quiz.put("DATE_TIME", getCurrentDateTime());
+        quiz.put("QUESTIONS", jsonQues);
+        quiz.saveInBackground(new SaveCallback() {
+            @Override
+            public void done(ParseException e) {
+                if (e == null) {
+                    Log.d(TAG, "QUIZ UPLOADED!");
+                    ParseQuery<ParseUser> query = ParseUser.getQuery();
+                    query.whereEqualTo("BRANCH", quizData.getBranch());
+                    query.whereEqualTo("SEMESTER", quizData.getSem());
+                    query.whereEqualTo("POST", "Student");
+                    query.findInBackground(new FindCallback<ParseUser>() {
+                        @Override
+                        public void done(List<ParseUser> objects, ParseException e) {
+                            List<String> channels = new ArrayList<String>();
+                            if (e == null) {
+                                String title = activity.getString(R.string.notification_title_quiz_uploaded);
+                                String message = activity.getString(R.string.notification_message_quiz_uploaded)
+                                        .replace("#NAME#", quizData.getName())
+                                        .replace("#SUBJECT#", quizData.getSubject())
+                                        .replace("#TEACHER#", quizData.getTeacher_id());
+                                for (ParseUser user : objects) {
+                                    Log.d(TAG, user.getEmail());
+                                    channels.add(user.getString("ENROLLMENT"));
+                                }
+                                if (channels.size() > 0) {
+                                    sendNotification(title, message, channels);
+                                }
+                                addNotificationToList(title, message, channels, quizData.getTeacher_id());
+                            } else Log.e(TAG, "ERROR", e);
+                        }
+                    });
+
+
+                    // sendNotification(title,message,);
+                } else {
+                    Log.e(TAG, "QUIZ UPLOAD ERROR", e);
+                }
+            }
+        });
+    }
+
+    protected static void loadAndUploadQuiz(Activity activity, String path, Quiz quizData) {
+        readExcelFile(activity, path, quizData);
+    }
 }

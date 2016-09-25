@@ -56,13 +56,36 @@ public class TeacherFragment extends Fragment implements View.OnClickListener {
             selectionDialogFragement.show(getFragmentManager(), "SELECTION_DIALOG");
         } else if (view.equals(btnUploadNotes)) {
             subject = "";
-            new GetTopicDialogFragment().show(getFragmentManager(), "TOPIC_DIALOG");
+            new GetDocumentInfoDialogFragment().show(getFragmentManager(), "TOPIC_DIALOG");
         } else if (view.equals(btnAddQuiz)) {
-
+            final Quiz quizData = new Quiz("X", "Y", "10", "5", "2", "4", user.getString("FIRST_NAME") + " " + user.getString("LAST_NAME"), "CE", "7", Functions.getCurrentDateTime());
+            DialogProperties properties = new DialogProperties();
+            properties.selection_mode = DialogConfigs.SINGLE_MODE;
+            properties.selection_type = DialogConfigs.FILE_SELECT;
+            properties.root = new File(DialogConfigs.DEFAULT_DIR);
+            properties.extensions = null;
+            FilePickerDialog filePickerDialog = new FilePickerDialog(activity, properties);
+            filePickerDialog.setDialogSelectionListener(new DialogSelectionListener() {
+                @Override
+                public void onSelectedFilePaths(final String[] files) {
+                    new Thread() {
+                        @Override
+                        public void run() {
+                            try {
+                                Log.d(TAG, "UPLOADING FILE:" + files[0]);
+                                Functions.loadAndUploadQuiz(activity, files[0], quizData);
+                            } catch (Exception e) {
+                                Log.e(TAG, "Error", e);
+                            }
+                        }
+                    }.start();
+                }
+            });
+            filePickerDialog.show();
         }
     }
 
-    public static class GetTopicDialogFragment extends DialogFragment {
+    public static class GetDocumentInfoDialogFragment extends DialogFragment {
         private View rootView;
         private Activity activity;
         private EditText etSubject;

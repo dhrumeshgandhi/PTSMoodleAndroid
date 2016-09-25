@@ -18,7 +18,7 @@ public class StudentFragment extends Fragment implements View.OnClickListener {
     private View rootView;
     private Activity activity;
     private String TAG = InitClass.TAG;
-    private Button btnNotifications, btnNotes;
+    private Button btnNotifications, btnNotes, btnGiveQuiz;
     private ParseUser user;
     private Bundle data;
 
@@ -31,8 +31,10 @@ public class StudentFragment extends Fragment implements View.OnClickListener {
         user = ParseUser.getCurrentUser();
         btnNotifications = (Button) rootView.findViewById(R.id.btnNotifications);
         btnNotes = (Button) rootView.findViewById(R.id.btnNotes);
+        btnGiveQuiz = (Button) rootView.findViewById(R.id.btnGiveQuiz);
         btnNotifications.setOnClickListener(this);
         btnNotes.setOnClickListener(this);
+        btnGiveQuiz.setOnClickListener(this);
         return rootView;
     }
 
@@ -51,6 +53,8 @@ public class StudentFragment extends Fragment implements View.OnClickListener {
             data.putString("BRANCH", user.getString("BRANCH"));
             notesFragment.setArguments(data);
             Functions.setFragment(null, notesFragment, "NOTES_FRAGMENT", R.id.fragmentContainerUser, true);
+        } else if (view.equals(btnGiveQuiz)) {
+            
         }
     }
 }

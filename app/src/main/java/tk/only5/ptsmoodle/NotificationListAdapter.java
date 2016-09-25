@@ -42,7 +42,7 @@ public class NotificationListAdapter extends BaseAdapter {
         if (convertView == null) {
             holder = new ViewHolder();
             convertView = li.inflate(R.layout.list_row_notification, null);
-            holder.tvTitle = (TextView) convertView.findViewById(R.id.tvNotificationUserSelectionEnroll);
+            holder.tvTitle = (TextView) convertView.findViewById(R.id.tvNotificationStudentSelectionEnroll);
             holder.tvDateTime = (TextView) convertView.findViewById(R.id.tvNotificationDateTime);
             holder.tvMessage = (TextView) convertView.findViewById(R.id.tvNotificationMessage);
             convertView.setTag(holder);

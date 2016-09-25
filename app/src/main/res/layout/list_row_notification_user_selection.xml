@@ -6,7 +6,7 @@
 
 
     <TextView
-        android:id="@+id/tvNotesSubject"
+        android:id="@+id/tvNotificationStudentSelectionEnroll"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentLeft="true"
@@ -16,18 +16,18 @@
         android:textAppearance="?android:attr/textAppearanceMedium" />
 
     <TextView
-        android:id="@+id/tvNotesSubject"
+        android:id="@+id/tvNotificationStudentSelectionName"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
-        android:layout_below="@+id/tvNotesSubject"
+        android:layout_below="@id/tvNotificationStudentSelectionEnroll"
         android:layout_marginTop="7dp"
         android:text="Name"
         android:textAppearance="?android:attr/textAppearanceSmall" />
 
     <TextView
-        android:id="@+id/tvNotesDateTime"
+        android:id="@+id/tvGiveQuizDateTime"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentEnd="true"
