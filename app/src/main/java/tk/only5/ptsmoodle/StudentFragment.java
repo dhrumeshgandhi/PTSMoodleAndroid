@@ -54,7 +54,12 @@ public class StudentFragment extends Fragment implements View.OnClickListener {
             notesFragment.setArguments(data);
             Functions.setFragment(null, notesFragment, "NOTES_FRAGMENT", R.id.fragmentContainerUser, true);
         } else if (view.equals(btnGiveQuiz)) {
-            
+            GiveQuizFragment giveQuizFragment = new GiveQuizFragment();
+            data = new Bundle();
+            data.putString("SEM", user.getString("SEMESTER"));
+            data.putString("BRANCH", user.getString("BRANCH"));
+            giveQuizFragment.setArguments(data);
+            Functions.setFragment(null, giveQuizFragment, "GIVE_QUIZ_FRAGMENT", R.id.fragmentContainerUser, true);
         }
     }
 }

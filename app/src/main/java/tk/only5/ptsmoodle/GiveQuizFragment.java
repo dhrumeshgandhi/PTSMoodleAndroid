@@ -2,7 +2,6 @@ package tk.only5.ptsmoodle;
 
 
 import android.app.Activity;
-import android.app.ProgressDialog;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -21,41 +20,46 @@ public class GiveQuizFragment extends Fragment implements SwipeRefreshLayout.OnR
     private View rootView;
     private Activity activity;
     private String TAG = InitClass.TAG;
-    private SwipeRefreshLayout srlNotes;
-    private ListView lvNotes;
-    private NotesListAdapter notesListAdapter;
-    private ArrayList<Notes> notesList;
+    private SwipeRefreshLayout srlQuiz;
+    private ListView lvQuiz;
+    private QuizListAdapter quizListAdapter;
+    private ArrayList<Quiz> quizList;
     private String sem, branch;
-    private ProgressDialog dialog;
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        rootView = inflater.inflate(R.layout.fragment_notes, container, false);
+        rootView = inflater.inflate(R.layout.fragment_give_quiz, container, false);
         activity = getActivity();
-        activity.setTitle("NOTES");
+        activity.setTitle("GIVE QUIZ");
         sem = getArguments().getString("SEM");
         branch = getArguments().getString("BRANCH");
-        lvNotes = (ListView) rootView.findViewById(R.id.lvNotes);
-        notesList = new ArrayList<>();
-        notesListAdapter = new NotesListAdapter(getContext(), notesList);
-        lvNotes.setAdapter(notesListAdapter);
-        notesListAdapter.notifyDataSetChanged();
-        srlNotes = (SwipeRefreshLayout) rootView.findViewById(R.id.srlNotes);
-        srlNotes.setColorSchemeResources(R.color.swipe_refresh_color);
-        srlNotes.setOnRefreshListener(this);
-        Functions.loadNotes(sem, branch, activity, notesList, notesListAdapter, srlNotes);
-        lvNotes.setOnItemLongClickListener(this);
+        lvQuiz = (ListView) rootView.findViewById(R.id.lvQuizList);
+        quizList = new ArrayList<>();
+        quizListAdapter = new QuizListAdapter(getContext(), quizList);
+        lvQuiz.setAdapter(quizListAdapter);
+        quizListAdapter.notifyDataSetChanged();
+        srlQuiz = (SwipeRefreshLayout) rootView.findViewById(R.id.srlQuiz);
+        srlQuiz.setColorSchemeResources(R.color.swipe_refresh_color);
+        srlQuiz.setOnRefreshListener(this);
+        Functions.loadQuiz(sem, branch, activity, quizList, quizListAdapter, srlQuiz);
+        lvQuiz.setOnItemLongClickListener(this);
         return rootView;
     }
 
     @Override
     public void onRefresh() {
-        Functions.loadNotes(sem, branch, activity, notesList, notesListAdapter, srlNotes);
+        Functions.loadQuiz(sem, branch, activity, quizList, quizListAdapter, srlQuiz);
     }
 
     @Override
     public boolean onItemLongClick(AdapterView<?> adapterView, View view, int i, long l) {
+        Quiz quiz = (Quiz) adapterView.getItemAtPosition(i);
+        QuizInfoDialogFragment quizInfoDialogFragment = new QuizInfoDialogFragment();
+        Bundle bundle = new Bundle();
+        bundle.putSerializable("QUIZ", quiz);
+        quizInfoDialogFragment.setArguments(bundle);
+        quizInfoDialogFragment.show(getFragmentManager(), "QUIZ_INFO");
         return true;
     }
 }

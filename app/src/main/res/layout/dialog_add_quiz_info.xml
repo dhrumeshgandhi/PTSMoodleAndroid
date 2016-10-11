@@ -1,89 +1,196 @@
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
     <RelativeLayout
+        android:id="@+id/rlDialog"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_margin="5dp">
 
-        <EditText
-            android:id="@+id/etQuizName"
+        <android.support.design.widget.TextInputLayout
+            android:id="@+id/tilQuizTitle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentEnd="true"
             android:layout_alignParentLeft="true"
             android:layout_alignParentRight="true"
             android:layout_alignParentStart="true"
-            android:layout_alignParentTop="true"
-            android:layout_marginTop="38dp"
-            android:hint="Quiz Name" />
+            android:layout_marginTop="20dp"
+            android:hint="Title">
 
-        <EditText
-            android:id="@+id/etSub"
+            <EditText
+                android:id="@+id/etQuizTitle"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:inputType="text" />
+        </android.support.design.widget.TextInputLayout>
+
+        <android.support.design.widget.TextInputLayout
+            android:id="@+id/tilSub"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentEnd="true"
             android:layout_alignParentLeft="true"
             android:layout_alignParentRight="true"
             android:layout_alignParentStart="true"
-            android:layout_below="@+id/etQuizName"
-            android:layout_marginTop="15dp"
-            android:hint="Subject" />
+            android:layout_below="@+id/tilQuizTitle"
+            android:layout_marginTop="10dp"
+            android:hint="Subject">
 
-        <EditText
-            android:id="@+id/etNoOfQue"
+            <EditText
+                android:id="@+id/etSubejct"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:inputType="text" />
+        </android.support.design.widget.TextInputLayout>
+
+        <android.support.design.widget.TextInputLayout
+            android:id="@+id/tilNoOfQue"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentLeft="true"
             android:layout_alignParentStart="true"
-            android:layout_below="@+id/etSub"
-            android:layout_marginTop="15dp"
-            android:gravity="center"
-            android:hint="No. of Questions"
-            android:inputType="numberSigned" />
+            android:layout_below="@+id/tilSub"
+            android:layout_marginTop="10dp"
+            android:layout_toLeftOf="@+id/textView2"
+            android:layout_toStartOf="@+id/textView2"
+            android:hint="No. of Questions">
 
-        <EditText
-            android:id="@+id/etPositive"
+            <EditText
+                android:id="@+id/etNoOfQue"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:inputType="numberSigned" />
+        </android.support.design.widget.TextInputLayout>
+
+        <android.support.design.widget.TextInputLayout
+            android:id="@+id/tilPositiveMarks"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_alignEnd="@+id/tilNoOfQue"
             android:layout_alignParentLeft="true"
             android:layout_alignParentStart="true"
-            android:layout_alignTop="@+id/etNegative"
+            android:layout_alignRight="@+id/tilNoOfQue"
+            android:layout_alignTop="@+id/tilNegativeMarks"
             android:gravity="center"
-            android:hint="Positive Marks"
-            android:inputType="numberDecimal" />
+            android:hint="Positive Marks">
 
-        <EditText
-            android:id="@+id/etNegative"
+            <EditText
+                android:id="@+id/etPositiveMarks"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:inputType="numberDecimal" />
+        </android.support.design.widget.TextInputLayout>
+
+        <android.support.design.widget.TextInputLayout
+            android:id="@+id/tilNegativeMarks"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_alignLeft="@+id/tilTimeLimit"
             android:layout_alignParentEnd="true"
             android:layout_alignParentRight="true"
-            android:layout_below="@+id/etTimeLimit"
-            android:layout_marginTop="15dp"
-            android:gravity="center"
-            android:hint="Negative Marks"
-            android:inputType="numberDecimal" />
+            android:layout_alignStart="@+id/tilTimeLimit"
+            android:layout_below="@+id/tilTimeLimit"
+            android:layout_marginTop="10dp"
+            android:hint="Negative Marks">
 
-        <EditText
-            android:id="@+id/etTimeLimit"
+            <EditText
+                android:id="@+id/etNegativeMarks"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:inputType="numberDecimal" />
+        </android.support.design.widget.TextInputLayout>
+
+        <android.support.design.widget.TextInputLayout
+            android:id="@+id/tilTimeLimit"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignEnd="@+id/etSub"
-            android:layout_alignRight="@+id/etSub"
-            android:layout_alignTop="@+id/etNoOfQue"
+            android:layout_alignEnd="@+id/tilSub"
+            android:layout_alignRight="@+id/tilSub"
+            android:layout_alignTop="@+id/tilNoOfQue"
+            android:layout_toEndOf="@+id/textView2"
+            android:layout_toRightOf="@+id/textView2"
             android:gravity="center"
-            android:hint="Time Limit(Min)"
-            android:inputType="numberSigned" />
+            android:hint="Time Limit(Min)">
+
+            <EditText
+                android:id="@+id/etTimeLimit"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:inputType="numberSigned" />
+        </android.support.design.widget.TextInputLayout>
+
+
+        <TextView
+            android:id="@+id/textView2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_centerVertical="true"
+            android:text="   " />
+
+
+        <TextView
+            android:id="@+id/tvSem"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignBaseline="@+id/tvBranch"
+            android:layout_alignBottom="@+id/tvBranch"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
+            android:layout_marginLeft="5dp"
+            android:hint="Semester :"
+            android:textSize="20dp" />
+
+        <Spinner
+            android:id="@+id/spinSem"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/tilPositiveMarks"
+            android:layout_marginTop="20dp"
+            android:layout_toRightOf="@id/tvSem"
+            android:contentDescription="@string/label_login"
+            android:spinnerMode="dialog"
+            android:textAlignment="center" />
+
+        <TextView
+            android:id="@+id/tvBranch"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignLeft="@+id/tilNegativeMarks"
+            android:layout_alignStart="@+id/tilNegativeMarks"
+            android:layout_below="@id/tilPositiveMarks"
+            android:layout_marginLeft="5sp"
+            android:layout_marginTop="29dp"
+            android:hint="Branch :"
+            android:textSize="20dp" />
+
+        <Spinner
+            android:id="@+id/spinBranch"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/tilPositiveMarks"
+            android:layout_marginTop="20dp"
+            android:layout_toRightOf="@id/tvBranch"
+            android:contentDescription="@string/label_login"
+            android:spinnerMode="dialog"
+            android:textAlignment="center" />
+
 
         <android.support.design.widget.FloatingActionButton
             android:id="@+id/fabAddQuiz"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignParentBottom="true"
+            android:layout_below="@id/tvSem"
             android:layout_centerHorizontal="true"
-            android:layout_marginBottom="62dp"
-            android:src="@drawable/right_arrow_512" />
+            android:layout_marginTop="20dp"
+            android:src="@drawable/right_arrow_512"
+            app:elevation="5dp" />
+
+        d
+
     </RelativeLayout>
+
 </FrameLayout>

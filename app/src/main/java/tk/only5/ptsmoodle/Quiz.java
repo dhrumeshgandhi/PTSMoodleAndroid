@@ -1,12 +1,15 @@
 package tk.only5.ptsmoodle;
 
+import org.json.JSONArray;
+
 import java.io.Serializable;
 
 /**
  * Created by DHRUMESH on 02-03-2016.
  */
 public class Quiz implements Serializable {
-    private String name, subject, no_of_ques, positive_marks, negative_marks, time_limit, teacher_id, branch, sem, upload_date;
+    private String name, subject, no_of_ques, positive_marks, negative_marks, time_limit, teacher_id, branch, sem, upload_date, teacher_name;
+    private transient JSONArray questions;
 
     public Quiz(String name, String subject, String no_of_ques, String positive_marks, String negative_marks, String time_limit, String teacher_id, String branch, String sem, String upload_date) {
         this.name = name;
@@ -20,6 +23,14 @@ public class Quiz implements Serializable {
         this.sem = sem;
         this.upload_date = upload_date;
 
+    }
+
+    public JSONArray getQuestions() {
+        return questions;
+    }
+
+    public void setQuestions(JSONArray questions) {
+        this.questions = questions;
     }
 
     public String getUpload_date() {
@@ -100,5 +111,13 @@ public class Quiz implements Serializable {
 
     public void setTeacher_id(String teacher_id) {
         this.teacher_id = teacher_id;
+    }
+
+    public String getTeacher_name() {
+        return teacher_name;
+    }
+
+    public void setTeacher_name(String teacher_name) {
+        this.teacher_name = teacher_name;
     }
 }

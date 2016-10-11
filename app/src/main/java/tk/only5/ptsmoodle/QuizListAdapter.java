@@ -41,7 +41,7 @@ public class QuizListAdapter extends BaseAdapter {
     public View getView(final int position, View convertView, ViewGroup parent) {
         if (convertView == null) {
             holder = new ViewHolder();
-            convertView = li.inflate(R.layout.list_row_notes, null);
+            convertView = li.inflate(R.layout.list_row_give_quiz, null);
             holder.tvSubject = (TextView) convertView.findViewById(R.id.tvGiveQuizSubject);
             holder.tvDateTime = (TextView) convertView.findViewById(R.id.tvGiveQuizDateTime);
             holder.tvName = (TextView) convertView.findViewById(R.id.tvGiveQuizName);

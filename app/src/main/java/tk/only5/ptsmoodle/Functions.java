@@ -10,10 +10,12 @@ import android.support.v4.widget.SwipeRefreshLayout;
 import android.util.Log;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.Toast;
 
 import com.parse.ConfigCallback;
 import com.parse.FindCallback;
 import com.parse.FunctionCallback;
+import com.parse.GetCallback;
 import com.parse.ParseCloud;
 import com.parse.ParseConfig;
 import com.parse.ParseException;
@@ -29,6 +31,7 @@ import org.apache.poi.hssf.usermodel.HSSFRow;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.File;
@@ -37,6 +40,7 @@ import java.io.InputStream;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -49,6 +53,8 @@ public class Functions {
     private static String TAG = InitClass.TAG;
     private static ProgressDialog dialog;
     private static View[] views;
+    private static int correct, wrong;
+    private static double marks;
 
     protected static View[] getChildFragmentViews() {
         return views;
@@ -488,9 +494,7 @@ public class Functions {
                             } else Log.e(TAG, "ERROR", e);
                         }
                     });
-
-
-                    // sendNotification(title,message,);
+                    Toast.makeText(activity, "Quiz Uploaded", Toast.LENGTH_LONG).show();
                 } else {
                     Log.e(TAG, "QUIZ UPLOAD ERROR", e);
                 }
@@ -500,5 +504,248 @@ public class Functions {
 
     protected static void loadAndUploadQuiz(Activity activity, String path, Quiz quizData) {
         readExcelFile(activity, path, quizData);
+    }
+
+    protected static void loadQuiz(String sem, String branch, final Activity activity,
+                                   final ArrayList<Quiz> quizList, final QuizListAdapter quizListAdapter,
+                                   final SwipeRefreshLayout srlNotes) {
+        srlNotes.setRefreshing(true);
+        ParseQuery<ParseObject> query = ParseQuery.getQuery("Quiz");
+        query.whereEqualTo("SEMESTER", sem);
+        query.whereEqualTo("BRANCH", branch);
+        query.addDescendingOrder("DATE_TIME");
+        query.findInBackground(new FindCallback<ParseObject>() {
+            @Override
+            public void done(final List<ParseObject> objects, ParseException e) {
+                if (e == null) {
+                    Log.d(TAG, "Query successful");
+                    activity.runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            quizList.clear();
+                            quizListAdapter.notifyDataSetChanged();
+                            for (final ParseObject object : objects) {
+                                ParseQuery<ParseUser> userQuery = ParseUser.getQuery();
+                                userQuery.whereEqualTo("TEACHER_ID", object.getString("TEACHER_ID"));
+                                try {
+                                    ParseUser teacher = userQuery.getFirst();
+                                    String teacherName =
+                                            teacher.getString("FIRST_NAME") + " " +
+                                                    teacher.getString("LAST_NAME");
+                                    Quiz quiz = new Quiz(
+                                            object.getString("NAME"),
+                                            object.getString("SUBJECT"),
+                                            object.getString("NO_OF_QUESTIONS"),
+                                            object.getString("POSITIVE_MARKS"),
+                                            object.getString("NEGATIVE_MARKS"),
+                                            object.getString("TIME_LIMIT"),
+                                            teacherName,
+                                            object.getString("BRANCH"),
+                                            object.getString("SEMESTER"),
+                                            object.getString("DATE_TIME"));
+                                    quiz.setTeacher_name(teacherName);
+                                    quiz.setQuestions(object.getJSONArray("QUESTIONS"));
+                                    quizList.add(quiz);
+                                    quizListAdapter.notifyDataSetChanged();
+                                } catch (Exception e) {
+                                    Log.e(TAG, "ERROR", e);
+                                }
+                            }
+                            srlNotes.setRefreshing(false);
+                        }
+                    });
+
+                } else {
+                    Log.e(TAG, "Query Unsuccessful", e);
+                    srlNotes.setRefreshing(false);
+                }
+            }
+        });
+
+    }
+
+    protected static ArrayList<Question> jsonQuestionsToRandomizedQuesList(JSONArray jsonQues) {
+        ArrayList<Question> queList = new ArrayList<>();
+        JSONObject jsonObj;
+        ArrayList<String> options;
+        Question question;
+        try {
+            for (int i = 0; i < jsonQues.length(); i++) {
+                jsonObj = jsonQues.getJSONObject(i);
+                options = getRandomizedOptionsFromJSON(jsonObj);
+                Thread.sleep(500);
+                question = new Question(
+                        jsonObj.getString("QUESTION"),
+                        options.get(0),
+                        options.get(1),
+                        options.get(2),
+                        options.get(3),
+                        jsonObj.getString("ID")
+                );
+                queList.add(question);
+            }
+            Collections.shuffle(queList);
+        } catch (Exception e) {
+            Log.e(TAG, "Error", e);
+        }
+        //Log.d(TAG, getQuizInJson(new Quiz("A","A","A","A","A","A","A","A"),queList).toString());
+        return queList;
+    }
+
+    protected static ArrayList<Question> jsonQuestionsToQuesList(JSONArray jsonQues) {
+        ArrayList<Question> queList = new ArrayList<>();
+        JSONObject jsonObj;
+        ArrayList<String> options;
+        Question question;
+        try {
+            for (int i = 0; i < jsonQues.length(); i++) {
+                jsonObj = jsonQues.getJSONObject(i);
+                options = getOptionsFromJSON(jsonObj);
+                Thread.sleep(500);
+                question = new Question(
+                        jsonObj.getString("QUESTION"),
+                        options.get(0),
+                        options.get(1),
+                        options.get(2),
+                        options.get(3),
+                        jsonObj.getString("ID")
+                );
+                queList.add(question);
+            }
+        } catch (Exception e) {
+            Log.e(TAG, "Error", e);
+        }
+        //Log.d(TAG, getQuizInJson(new Quiz("A","A","A","A","A","A","A","A"),queList).toString());
+        return queList;
+    }
+
+    protected static ArrayList<String> getRandomizedOptionsFromJSON(JSONObject jsonObj) throws JSONException {
+        ArrayList<String> options = new ArrayList<>();
+        options.add(jsonObj.getString("ANSWER"));
+        options.add(jsonObj.getString("OPTION1"));
+        options.add(jsonObj.getString("OPTION2"));
+        options.add(jsonObj.getString("OPTION3"));
+        Collections.shuffle(options);
+        return options;
+    }
+
+    protected static ArrayList<String> getOptionsFromJSON(JSONObject jsonObj) throws JSONException {
+        ArrayList<String> options = new ArrayList<>();
+        options.add(jsonObj.getString("ANSWER"));
+        options.add(jsonObj.getString("OPTION1"));
+        options.add(jsonObj.getString("OPTION2"));
+        options.add(jsonObj.getString("OPTION3"));
+        return options;
+    }
+
+    protected static void checkQuizAndUploadResult(final ArrayList<Question> questions, final ArrayList<Answer> answers, final String positive, final String negative, final Quiz quiz, final ParseUser user, final long time_left) {
+        new Thread() {
+            @Override
+            public void run() {
+                correct = 0;
+                wrong = 0;
+                marks = 0;
+                for (Question question : questions) {
+                    for (Answer answer : answers) {
+                        if (question.getQue().equals(answer.getQue())) {
+                            //   Log.d(TAG, "QUE_ANSWER:" + question.getAns());
+                            //   Log.d(TAG, "ANS_ANSWER:" + answer.getAns());
+                            if (question.getAns().equals(answer.getAns())) {
+                                correct++;
+                            } else {
+                                wrong++;
+                            }
+                            break;
+                        }
+                    }
+                }
+                Log.d(TAG, "CORRECT:" + correct + " WRONG:" + wrong);
+                marks = correct * Double.parseDouble(positive) - wrong * Double.parseDouble(negative);
+                ParseQuery<ParseObject> query = ParseQuery.getQuery("QuizResults");
+                query.whereEqualTo("TITLE", quiz.getName());
+                query.whereEqualTo("SUBJECT", quiz.getSubject());
+                query.whereEqualTo("SEMESTER", quiz.getSem());
+                query.whereEqualTo("BRANCH", quiz.getBranch());
+                query.getFirstInBackground(new GetCallback<ParseObject>() {
+                    @Override
+                    public void done(ParseObject object, ParseException e) {
+                        try {
+                            if (e == null) {
+                                JSONObject jsonObject = new JSONObject();
+                                jsonObject.put("ENROLLMENT", user.getString("ENROLLMENT"));
+                                jsonObject.put("MARKS", marks);
+                                jsonObject.put("TIME_TAKEN", getTimeFromMillis(Integer.parseInt(quiz.getTime_limit()) * 60000 - time_left));
+                                jsonObject.put("CORRECT", correct);
+                                jsonObject.put("WRONG", wrong);
+                                JSONArray jsonArray = object.getJSONArray("RESULTS");
+                                Log.d(TAG, jsonArray.toString());
+                                for (int i = 0; i < jsonArray.length(); i++) {
+                                    if (jsonArray.getJSONObject(i).getString("ENROLLMENT").equals(user.getString("ENROLLMENT"))) {
+                                        Log.d(TAG, "Quiz already submitted..SKIPPING IT!");
+                                        return;
+                                    }
+                                }
+                                jsonArray.put(jsonObject);
+                                object.put("RESULTS", jsonArray);
+                                object.saveInBackground(new SaveCallback() {
+                                    @Override
+                                    public void done(ParseException e) {
+                                        if (e == null) {
+                                            Log.d(TAG, "Result Added to list");
+                                        } else {
+                                            Log.e(TAG, "ERROR", e);
+                                        }
+                                    }
+                                });
+                            } else {
+                                if (e.getCode() == 101) {
+                                    JSONArray jsonArray = new JSONArray();
+                                    JSONObject jsonObject = new JSONObject();
+                                    jsonObject.put("ENROLLMENT", user.getString("ENROLLMENT"));
+                                    jsonObject.put("MARKS", marks);
+                                    jsonObject.put("TIME_TAKEN", getTimeFromMillis(Integer.parseInt(quiz.getTime_limit()) * 60000 - time_left));
+                                    jsonObject.put("CORRECT", correct);
+                                    jsonObject.put("WRONG", wrong);
+                                    jsonArray.put(jsonObject);
+                                    ParseObject result = new ParseObject("QuizResults");
+                                    result.put("TITLE", quiz.getName());
+                                    result.put("SUBJECT", quiz.getSubject());
+                                    result.put("SEMESTER", quiz.getSem());
+                                    result.put("BRANCH", quiz.getBranch());
+                                    result.put("TOTAL_MARKS", Double.parseDouble(positive) * Double.parseDouble(quiz.getNo_of_ques()));
+                                    result.put("RESULTS", jsonArray);
+                                    result.saveInBackground(new SaveCallback() {
+                                        @Override
+                                        public void done(ParseException e) {
+                                            if (e == null) {
+                                                Log.d(TAG, "Result Saved");
+                                            } else {
+                                                Log.e(TAG, "ERROR", e);
+                                            }
+                                        }
+                                    });
+
+                                } else {
+                                    Log.e(TAG, "ERROR", e);
+                                }
+                            }
+                        } catch (Exception e1) {
+                            Log.e(TAG, "ERROR", e1);
+                        }
+                    }
+                });
+                Log.d(TAG, "Marks:" + marks);
+            }
+        }.start();
+    }
+
+    protected static String getTimeFromMillis(long millis) {
+        int sec = (int) (millis / 1000);
+        int min = sec / 60;
+        sec = sec % 60;
+        String minS = min + "", secS = sec + "";
+        if (min < 10) minS = "0" + minS;
+        if (sec < 10) secS = "0" + secS;
+        return (minS + ":" + secS);
     }
 }

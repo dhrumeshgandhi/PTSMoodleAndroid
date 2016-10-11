@@ -23,7 +23,7 @@ import com.parse.ParseUser;
 
 import java.io.File;
 
-public class TeacherFragment extends Fragment implements View.OnClickListener {
+public class TeacherFragment extends Fragment implements View.OnClickListener, AddQuizDialogFragment.OnDialogSubmitListener {
 
     private static String subject = "", branch = "", sem = "";
     private static String TAG = InitClass.TAG;
@@ -32,6 +32,7 @@ public class TeacherFragment extends Fragment implements View.OnClickListener {
     private View rootView;
     private Activity activity;
     private Button btnSendNotification, btnUploadNotes, btnAddQuiz;
+    private int ADD_QUIZ_DIALOG_REQUEST_CODE = 16296;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -58,7 +59,10 @@ public class TeacherFragment extends Fragment implements View.OnClickListener {
             subject = "";
             new GetDocumentInfoDialogFragment().show(getFragmentManager(), "TOPIC_DIALOG");
         } else if (view.equals(btnAddQuiz)) {
-            final Quiz quizData = new Quiz("X", "Y", "10", "5", "2", "4", user.getString("FIRST_NAME") + " " + user.getString("LAST_NAME"), "CE", "7", Functions.getCurrentDateTime());
+            AddQuizDialogFragment addQuizDialogFragment = new AddQuizDialogFragment();
+            addQuizDialogFragment.setTargetFragment(this, ADD_QUIZ_DIALOG_REQUEST_CODE);
+            addQuizDialogFragment.show(getFragmentManager(), "ADD_QUIZ_DIALOG");
+            /*final Quiz quizData = new Quiz("X", "Y", "10", "5", "2", "4", user.getString("FIRST_NAME") + " " + user.getString("LAST_NAME"), "CE", "7", Functions.getCurrentDateTime());
             DialogProperties properties = new DialogProperties();
             properties.selection_mode = DialogConfigs.SINGLE_MODE;
             properties.selection_type = DialogConfigs.FILE_SELECT;
@@ -81,8 +85,35 @@ public class TeacherFragment extends Fragment implements View.OnClickListener {
                     }.start();
                 }
             });
-            filePickerDialog.show();
+            filePickerDialog.show();*/
         }
+    }
+
+    @Override
+    public void onDialogSubmit(final Quiz quizData) {
+        DialogProperties properties = new DialogProperties();
+        properties.selection_mode = DialogConfigs.SINGLE_MODE;
+        properties.selection_type = DialogConfigs.FILE_SELECT;
+        properties.root = new File(DialogConfigs.DEFAULT_DIR);
+        properties.extensions = null;
+        FilePickerDialog filePickerDialog = new FilePickerDialog(activity, properties);
+        filePickerDialog.setDialogSelectionListener(new DialogSelectionListener() {
+            @Override
+            public void onSelectedFilePaths(final String[] files) {
+                new Thread() {
+                    @Override
+                    public void run() {
+                        try {
+                            Log.d(TAG, "UPLOADING FILE:" + files[0]);
+                            Functions.loadAndUploadQuiz(activity, files[0], quizData);
+                        } catch (Exception e) {
+                            Log.e(TAG, "Error", e);
+                        }
+                    }
+                }.start();
+            }
+        });
+        filePickerDialog.show();
     }
 
     public static class GetDocumentInfoDialogFragment extends DialogFragment {
@@ -154,4 +185,6 @@ public class TeacherFragment extends Fragment implements View.OnClickListener {
             return rootView;
         }
     }
+
+
 }
