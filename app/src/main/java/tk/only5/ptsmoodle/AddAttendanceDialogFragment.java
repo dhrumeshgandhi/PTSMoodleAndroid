@@ -12,7 +12,7 @@ import android.view.ViewGroup;
 
 import com.parse.ParseUser;
 
-public class NotificationUserSelectionDialogFragment extends DialogFragment implements View.OnClickListener {
+public class AddAttendanceDialogFragment extends DialogFragment implements View.OnClickListener {
 
     protected static CustomViewPager viewPager;
     protected static FloatingActionButton fabCancel, fabNext, fabPrevious;
@@ -24,9 +24,9 @@ public class NotificationUserSelectionDialogFragment extends DialogFragment impl
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        rootView = inflater.inflate(R.layout.dialog_notification_user_selection, container, false);
+        rootView = inflater.inflate(R.layout.dialog_add_attendance, container, false);
         activity = getActivity();
-        getDialog().setTitle("Send Notification");
+        getDialog().setTitle("Add Attendance");
         // Functions.sendNotification("Test", "Hello", Arrays.asList("13012011012", "TEST"));
         user = ParseUser.getCurrentUser();
         fabNext = (FloatingActionButton) rootView.findViewById(R.id.fabNext);
@@ -35,9 +35,9 @@ public class NotificationUserSelectionDialogFragment extends DialogFragment impl
         fabNext.setOnClickListener(this);
         fabCancel.setOnClickListener(this);
         fabPrevious.setOnClickListener(this);
-        viewPager = (CustomViewPager) rootView.findViewById(R.id.vpNotificationUserSelectionDialog);
-        viewPager.setAdapter(new NotificationUserSelectionDialogViewPagerAdapter(getChildFragmentManager()));
-        NotificationUserSelectionDialogFragment.fabPrevious.setVisibility(View.INVISIBLE);
+        viewPager = (CustomViewPager) rootView.findViewById(R.id.vpAddAttendanceDialog);
+        viewPager.setAdapter(new AddAttendanceDialogViewPagerAdapter(getChildFragmentManager()));
+        AddAttendanceDialogFragment.fabPrevious.setVisibility(View.INVISIBLE);
         return rootView;
     }
 
@@ -45,8 +45,8 @@ public class NotificationUserSelectionDialogFragment extends DialogFragment impl
     public void onClick(View view) {
         if (view.equals(fabNext)) {
             int current = viewPager.getCurrentItem();
-            if (current == 0) NotificationUserSelectionDialogViewsFragement.getNotificationInfo();
-            else if (current == 1) NotificationUserSelectionDialogViewsFragement.sendNotification();
+            if (current == 0) AddAttendanceDialogViewsFragment.getAttendanceInfo();
+            else if (current == 1) AddAttendanceDialogViewsFragment.addAttendance();
             viewPager.setCurrentItem(current + 1);
             if (viewPager.getCurrentItem() == viewPager.getChildCount())
                 hideNextPreviousButtons(true, true);

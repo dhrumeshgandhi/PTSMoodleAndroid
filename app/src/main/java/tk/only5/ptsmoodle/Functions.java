@@ -48,7 +48,7 @@ import java.util.List;
 import java.util.Map;
 
 public class Functions {
-    protected static ArrayList<String> SEMESTERS = new ArrayList<>(), BRANCHES = new ArrayList<>(), SEM_TEACHER = new ArrayList<>(), BRANCH_TEACHER = new ArrayList<>();
+    protected static ArrayList<String> SEMESTERS = new ArrayList<>(), BRANCHES = new ArrayList<>(), SEM_TEACHER = new ArrayList<>(), BRANCH_TEACHER = new ArrayList<>(), SUBJECT_TEACHER = new ArrayList<>();
     protected static FragmentManager currentFragmentManager;
     private static String TAG = InitClass.TAG;
     private static ProgressDialog dialog;
@@ -319,11 +319,13 @@ public class Functions {
                                         //return classSubjects;
                                     }
                                     for (int k = 0; k < classSubjects.size(); k++) {
-                                        Log.d(TAG, classSubjects.get(k).getSemItem() + " " + classSubjects.get(k).getBranchItem());
+                                        Log.d(TAG, classSubjects.get(k).getSubjectItem() + " " + classSubjects.get(k).getSemItem() + " " + classSubjects.get(k).getBranchItem());
                                         if (!SEM_TEACHER.contains(classSubjects.get(k).getSemItem()))
                                             SEM_TEACHER.add(classSubjects.get(k).getSemItem());
                                         if (!BRANCH_TEACHER.contains(classSubjects.get(k).getBranchItem()))
                                             BRANCH_TEACHER.add(classSubjects.get(k).getBranchItem());
+                                        if (!SUBJECT_TEACHER.contains(classSubjects.get(k).getSubjectItem()))
+                                            SUBJECT_TEACHER.add(classSubjects.get(k).getSubjectItem());
                                     }
                                 } catch (Exception ex) {
                                     Log.e(TAG, "ERROR", ex);

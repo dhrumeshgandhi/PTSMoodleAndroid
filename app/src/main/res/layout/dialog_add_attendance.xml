@@ -8,7 +8,7 @@
         android:layout_margin="5dp">
 
         <tk.only5.ptsmoodle.CustomViewPager
-            android:id="@+id/vpNotificationUserSelectionDialog"
+            android:id="@+id/vpAddAttendanceDialog"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_above="@+id/fabCancel"

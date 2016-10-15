@@ -76,5 +76,26 @@
             android:layout_toRightOf="@+id/tvBranch"
             android:gravity="center"
             android:spinnerMode="dialog" />
+
+        <TextView
+            android:id="@+id/tvSubject"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
+            android:layout_below="@id/tvSem"
+            android:layout_marginTop="15dp"
+            android:hint="Subject:"
+            android:textSize="20dp" />
+
+        <Spinner
+            android:id="@+id/spinSubject"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/spinSem"
+            android:layout_marginTop="21dp"
+            android:layout_toRightOf="@id/tvSubject"
+            android:contentDescription="@string/label_login"
+            android:spinnerMode="dialog" />
     </RelativeLayout>
 </FrameLayout>

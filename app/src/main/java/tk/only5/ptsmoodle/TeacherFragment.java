@@ -65,7 +65,8 @@ public class TeacherFragment extends Fragment implements View.OnClickListener, A
             addQuizDialogFragment.setTargetFragment(this, ADD_QUIZ_DIALOG_REQUEST_CODE);
             addQuizDialogFragment.show(getFragmentManager(), "ADD_QUIZ_DIALOG");
         } else if (view.equals(btnAddAttendance)) {
-            AddAttendanceDialogViewsFragment addAttendanceDialogViewsFragment = new AddAttendanceDialogViewsFragment();
+            AddAttendanceDialogFragment addAttendanceDialogViewsFragment = new AddAttendanceDialogFragment();
+            addAttendanceDialogViewsFragment.setCancelable(false);
             addAttendanceDialogViewsFragment.show(getFragmentManager(), "ADD_ATTENDANCE_DIALOG");
         }
     }

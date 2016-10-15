@@ -2,6 +2,7 @@ package tk.only5.ptsmoodle;
 
 
 import android.app.Activity;
+import android.app.ProgressDialog;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
 import android.util.Log;
@@ -12,7 +13,6 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
-import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -28,11 +28,11 @@ import java.util.List;
 
 public class AddAttendanceDialogViewsFragment extends DialogFragment {
     private static Activity activity;
-    private static EditText etTitle, etMessage;
-    private static Spinner spinSem, spinBranch;
-    private static String title = "", message = "", sem = "", branch = "";
+    private static DatePickerEditText dpetDate;
+    private static Spinner spinSem, spinBranch, spinSubject;
+    private static String date, sem = "", branch = "";
     private static CheckBox ctvSelectAll;
-    private static ArrayAdapter<String> semAdapter, branchAdapter, studentAdapter;
+    private static ArrayAdapter<String> semAdapter, branchAdapter, subjectAdapter, studentAdapter;
     private static ArrayList<String> studentList = new ArrayList<>();
     private static NonScrollListView lvStudentList;
     private static List<String> selectedStudentsList = new ArrayList<>();
@@ -43,15 +43,15 @@ public class AddAttendanceDialogViewsFragment extends DialogFragment {
     private View rootView;
     private String TAG = InitClass.TAG;
 
-    protected static void getNotificationInfo() {
-        title = etTitle.getText().toString();
-        message = etMessage.getText().toString();
+    protected static void getAttendanceInfo() {
+        date = dpetDate.getText().toString();
         sem = spinSem.getSelectedItem().toString();
         branch = spinBranch.getSelectedItem().toString();
-        if (title.isEmpty() || message.isEmpty() || sem.isEmpty() || branch.isEmpty()) {
+        if (date.isEmpty() || sem.isEmpty() || branch.isEmpty()) {
             Toast.makeText(activity, "Please Fill All Details", Toast.LENGTH_LONG).show();
         } else {
             if (!sem.isEmpty() && !branch.isEmpty()) {
+                final ProgressDialog dialog = Functions.showLoading(activity, "Loading Students!");
                 ParseQuery<ParseUser> query = ParseUser.getQuery();
                 query.whereEqualTo("SEMESTER", sem);
                 query.whereEqualTo("BRANCH", branch);
@@ -64,13 +64,15 @@ public class AddAttendanceDialogViewsFragment extends DialogFragment {
                             studentList.add(user.getString("ENROLLMENT"));
                         }
                         studentAdapter.notifyDataSetChanged();
+                        Toast.makeText(activity, "No Student Found!", Toast.LENGTH_LONG).show();
+                        dialog.dismiss();
                     }
                 });
             }
         }
     }
 
-    protected static void sendNotification() {
+    protected static void addAttendance() {
         if (lvStudentList.getCount() > 0) {
             SparseBooleanArray checkedList = lvStudentList.getCheckedItemPositions();
             for (int i = 0; i < lvStudentList.getCount(); i++) {
@@ -80,9 +82,7 @@ public class AddAttendanceDialogViewsFragment extends DialogFragment {
                 }
             }
             if (selectedStudentsList.size() > 0) {
-                Functions.sendNotification(title, message, selectedStudentsList);
-                Functions.addNotificationToList(title, message, selectedStudentsList, user.getString("TEACHER_ID"));
-                tvStudentList.setText(selectedStudent);
+                tvStudentList.setText(selectedStudent + " Date:" + date);
             } else {
                 tvStudentList.setText("None");
             }
@@ -98,22 +98,25 @@ public class AddAttendanceDialogViewsFragment extends DialogFragment {
         switch (pos) {
             case 0:
                 rootView = inflater.inflate(
-                        R.layout.dialog_notification_user_selection_view1,
+                        R.layout.dialog_add_attendence_view1,
                         container, false);
-                etTitle = (EditText) rootView.findViewById(R.id.etNotificationTitle);
-                etMessage = (EditText) rootView.findViewById(R.id.etNotificationMessage);
+                dpetDate = (DatePickerEditText) rootView.findViewById(R.id.dpetDate);
                 spinBranch = (Spinner) rootView.findViewById(R.id.spinBranch);
                 spinSem = (Spinner) rootView.findViewById(R.id.spinSem);
+                spinSubject = (Spinner) rootView.findViewById(R.id.spinSubject);
                 semAdapter = new ArrayAdapter<>(activity, android.R.layout.simple_spinner_dropdown_item, Functions.SEM_TEACHER);
                 spinSem.setAdapter(semAdapter);
                 semAdapter.notifyDataSetChanged();
                 branchAdapter = new ArrayAdapter<>(activity, android.R.layout.simple_spinner_dropdown_item, Functions.BRANCH_TEACHER);
                 spinBranch.setAdapter(branchAdapter);
                 branchAdapter.notifyDataSetChanged();
+                subjectAdapter = new ArrayAdapter<>(activity, android.R.layout.simple_spinner_dropdown_item, Functions.SUBJECT_TEACHER);
+                spinSubject.setAdapter(subjectAdapter);
+                subjectAdapter.notifyDataSetChanged();
                 break;
             case 1:
                 rootView = inflater.inflate(
-                        R.layout.dialog_notification_user_selection_view2,
+                        R.layout.dialog_add_attendence_view2,
                         container, false);
                 lvStudentList = (NonScrollListView) rootView.findViewById(R.id.lvNotificationStudentList);
                 lvStudentList.setChoiceMode(NonScrollListView.CHOICE_MODE_MULTIPLE);
@@ -137,7 +140,7 @@ public class AddAttendanceDialogViewsFragment extends DialogFragment {
                 break;
             case 2:
                 rootView = inflater.inflate(
-                        R.layout.dialog_notification_user_selection_view3,
+                        R.layout.dialog_add_attendence_view3,
                         container, false);
                 tvStudentList = (TextView) rootView.findViewById(R.id.tvStudentList);
                 tvStudentList.setText(selectedStudent);
