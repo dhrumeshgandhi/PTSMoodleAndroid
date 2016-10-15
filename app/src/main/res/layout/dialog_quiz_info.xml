@@ -129,6 +129,7 @@
             android:layout_alignBottom="@+id/textView"
             android:layout_alignTop="@+id/textView"
             android:layout_marginLeft="10dp"
+            android:layout_marginRight="50dp"
             android:layout_toRightOf="@id/textView"
             android:text="XX"
             android:textAppearance="?android:attr/textAppearanceMedium" />

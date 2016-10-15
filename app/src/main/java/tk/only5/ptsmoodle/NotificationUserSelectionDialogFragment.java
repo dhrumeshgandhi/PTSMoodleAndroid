@@ -24,7 +24,7 @@ public class NotificationUserSelectionDialogFragment extends DialogFragment impl
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        rootView = inflater.inflate(R.layout.fragment_notification_user_selection_dialog_fragement, container, false);
+        rootView = inflater.inflate(R.layout.dialog_notification_user_selection, container, false);
         activity = getActivity();
         getDialog().setTitle("Send Notification");
         // Functions.sendNotification("Test", "Hello", Arrays.asList("13012011012", "TEST"));

@@ -22,7 +22,7 @@ import com.parse.ParseUser;
 import java.util.ArrayList;
 
 
-public class GivingQuizFragment extends Fragment implements View.OnClickListener, GivingQuizListAdapter.OnQuestionAnsweredListener {
+public class GivingQuizFragment extends Fragment implements View.OnClickListener, GivingQuizListAdapter.OnQuestionAnsweredListener, Functions.OnMarksCalculatedListener {
 
     protected static String jsonAnswer;
     private View rootView;
@@ -39,6 +39,8 @@ public class GivingQuizFragment extends Fragment implements View.OnClickListener
     private Timer timer;
     private int correct = 0, wrong = 0;
     private double marks = 0;
+    private Bundle data;
+    private ParseUser user;
 
     @Nullable
     @Override
@@ -46,6 +48,7 @@ public class GivingQuizFragment extends Fragment implements View.OnClickListener
         rootView = inflater.inflate(R.layout.fragment_giving_quiz, container, false);
         activity = getActivity();
         activity.setTitle("GIVING QUIZ");
+        user = ParseUser.getCurrentUser();
         quiz = (Quiz) getArguments().getSerializable("QUIZ");
         quesList = Functions.jsonQuestionsToRandomizedQuesList(quiz.getQuestions());
         fabNext = (FloatingActionButton) rootView.findViewById(R.id.fabSubmit);
@@ -88,9 +91,32 @@ public class GivingQuizFragment extends Fragment implements View.OnClickListener
         if (v.equals(fabNext)) {
             answers = quesAdapter.getAnswers();
             timer.cancel(true);
-            Functions.checkQuizAndUploadResult(Functions.jsonQuestionsToQuesList(quiz.getQuestions()), answers, quiz.getPositive_marks(), quiz.getNegative_marks(), quiz, ParseUser.getCurrentUser(), timer.millis);
-            //jsonAnswer = Functions.getAnswersInJson(answers).toString();
+            Functions.checkQuizAndUploadResult(this, Functions.jsonQuestionsToQuesList(quiz.getQuestions()), answers, quiz.getPositive_marks(), quiz.getNegative_marks(), quiz, ParseUser.getCurrentUser(), timer.millis);
         }
+    }
+
+    @Override
+    public void onMarksCalculated(double marks, int correct, double total) {
+        new AlertDialog.Builder(activity)
+                .setTitle("Result of Quiz")
+                .setMessage(getResources().getString(R.string.dialog_message_quiz_result)
+                        .replace("#MARKS#", marks + "")
+                        .replace("#TOTALMARKS#", total + "")
+                        .replace("#CORRECT#", correct + ""))
+                .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        StudentFragment studentFragment = new StudentFragment();
+                        data = new Bundle();
+                        data.putString("SEM", user.getString("SEMESTER"));
+                        data.putString("BRANCH", user.getString("BRANCH"));
+                        studentFragment.setArguments(data);
+                        getFragmentManager().popBackStack();
+                        Functions.setFragment(null, studentFragment, "STUDENT_FRAGMENT", R.id.fragmentContainerUser, false);
+                    }
+                })
+                .create()
+                .show();
     }
 
     class Timer extends AsyncTask {

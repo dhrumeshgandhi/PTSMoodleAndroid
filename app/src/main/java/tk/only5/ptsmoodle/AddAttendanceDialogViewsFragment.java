@@ -3,7 +3,7 @@ package tk.only5.ptsmoodle;
 
 import android.app.Activity;
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
+import android.support.v4.app.DialogFragment;
 import android.util.Log;
 import android.util.SparseBooleanArray;
 import android.view.LayoutInflater;
@@ -26,8 +26,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 
-public class NotificationUserSelectionDialogViewsFragement extends Fragment {
-
+public class AddAttendanceDialogViewsFragment extends DialogFragment {
     private static Activity activity;
     private static EditText etTitle, etMessage;
     private static Spinner spinSem, spinBranch;

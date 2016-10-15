@@ -638,10 +638,11 @@ public class Functions {
         return options;
     }
 
-    protected static void checkQuizAndUploadResult(final ArrayList<Question> questions, final ArrayList<Answer> answers, final String positive, final String negative, final Quiz quiz, final ParseUser user, final long time_left) {
+    protected static void checkQuizAndUploadResult(final Fragment fragment, final ArrayList<Question> questions, final ArrayList<Answer> answers, final String positive, final String negative, final Quiz quiz, final ParseUser user, final long time_left) {
         new Thread() {
             @Override
             public void run() {
+                final OnMarksCalculatedListener onMarksCalculatedListener = (OnMarksCalculatedListener) fragment;
                 correct = 0;
                 wrong = 0;
                 marks = 0;
@@ -735,6 +736,12 @@ public class Functions {
                     }
                 });
                 Log.d(TAG, "Marks:" + marks);
+                fragment.getActivity().runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        onMarksCalculatedListener.onMarksCalculated(marks, correct, Double.parseDouble(positive) * Double.parseDouble(quiz.getNo_of_ques()));
+                    }
+                });
             }
         }.start();
     }
@@ -747,5 +754,9 @@ public class Functions {
         if (min < 10) minS = "0" + minS;
         if (sec < 10) secS = "0" + secS;
         return (minS + ":" + secS);
+    }
+
+    public interface OnMarksCalculatedListener {
+        void onMarksCalculated(double marks, int correct, double total);
     }
 }

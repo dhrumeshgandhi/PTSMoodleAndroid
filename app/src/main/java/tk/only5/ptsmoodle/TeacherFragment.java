@@ -31,7 +31,7 @@ public class TeacherFragment extends Fragment implements View.OnClickListener, A
     private static ParseUser user;
     private View rootView;
     private Activity activity;
-    private Button btnSendNotification, btnUploadNotes, btnAddQuiz;
+    private Button btnSendNotification, btnUploadNotes, btnAddQuiz, btnAddAttendance;
     private int ADD_QUIZ_DIALOG_REQUEST_CODE = 16296;
 
     @Override
@@ -41,10 +41,12 @@ public class TeacherFragment extends Fragment implements View.OnClickListener, A
         activity.setTitle("Teacher");
         btnSendNotification = (Button) rootView.findViewById(R.id.btnSendNotification);
         btnUploadNotes = (Button) rootView.findViewById(R.id.btnUploadNotes);
+        btnAddAttendance = (Button) rootView.findViewById(R.id.btnAddAttendance);
         btnAddQuiz = (Button) rootView.findViewById(R.id.btnAddQuiz);
         btnSendNotification.setOnClickListener(this);
         btnUploadNotes.setOnClickListener(this);
         btnAddQuiz.setOnClickListener(this);
+        btnAddAttendance.setOnClickListener(this);
         user = ParseUser.getCurrentUser();
         return rootView;
     }
@@ -62,30 +64,9 @@ public class TeacherFragment extends Fragment implements View.OnClickListener, A
             AddQuizDialogFragment addQuizDialogFragment = new AddQuizDialogFragment();
             addQuizDialogFragment.setTargetFragment(this, ADD_QUIZ_DIALOG_REQUEST_CODE);
             addQuizDialogFragment.show(getFragmentManager(), "ADD_QUIZ_DIALOG");
-            /*final Quiz quizData = new Quiz("X", "Y", "10", "5", "2", "4", user.getString("FIRST_NAME") + " " + user.getString("LAST_NAME"), "CE", "7", Functions.getCurrentDateTime());
-            DialogProperties properties = new DialogProperties();
-            properties.selection_mode = DialogConfigs.SINGLE_MODE;
-            properties.selection_type = DialogConfigs.FILE_SELECT;
-            properties.root = new File(DialogConfigs.DEFAULT_DIR);
-            properties.extensions = null;
-            FilePickerDialog filePickerDialog = new FilePickerDialog(activity, properties);
-            filePickerDialog.setDialogSelectionListener(new DialogSelectionListener() {
-                @Override
-                public void onSelectedFilePaths(final String[] files) {
-                    new Thread() {
-                        @Override
-                        public void run() {
-                            try {
-                                Log.d(TAG, "UPLOADING FILE:" + files[0]);
-                                Functions.loadAndUploadQuiz(activity, files[0], quizData);
-                            } catch (Exception e) {
-                                Log.e(TAG, "Error", e);
-                            }
-                        }
-                    }.start();
-                }
-            });
-            filePickerDialog.show();*/
+        } else if (view.equals(btnAddAttendance)) {
+            AddAttendanceDialogViewsFragment addAttendanceDialogViewsFragment = new AddAttendanceDialogViewsFragment();
+            addAttendanceDialogViewsFragment.show(getFragmentManager(), "ADD_ATTENDANCE_DIALOG");
         }
     }
 
