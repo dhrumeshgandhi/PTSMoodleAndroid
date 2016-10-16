@@ -19,8 +19,10 @@
     <string name="notification_user_selection_choice">To whom you want to send notification?</string>
     <string name="notification_title_note_uploaded">Notes Uploaded!!</string>
     <string name="notification_title_quiz_uploaded">Quiz Uploaded!!</string>
+    <string name="notification_title_quiz_result">Quiz Result!!</string>
     <string name="notification_message_note_uploaded">Note has been uploaded for #SUBJECT# by #TEACHER#</string>
     <string name="notification_message_quiz_uploaded">Quiz(#NAME#) has been uploaded for #SUBJECT# by #TEACHER#</string>
+    <string name="notification_message_quiz_result">Result of Quiz of #SUBJECT#:#MARKS# out of #TOTALMARKS#</string>
     <string name="dialog_message_quiz_result">You got #MARKS# out of #TOTALMARKS# with #CORRECT# correct answers.</string>
     <string-array name="notification_user_selection_list">
         <item>Parent</item>

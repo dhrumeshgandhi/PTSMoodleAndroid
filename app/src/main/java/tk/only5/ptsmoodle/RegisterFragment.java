@@ -25,7 +25,9 @@ import android.widget.RadioGroup;
 import android.widget.Spinner;
 import android.widget.TextView;
 
+import com.parse.GetCallback;
 import com.parse.ParseException;
+import com.parse.ParseQuery;
 import com.parse.ParseUser;
 import com.parse.SignUpCallback;
 
@@ -197,31 +199,40 @@ public class RegisterFragment extends Fragment implements RadioGroup.OnCheckedCh
                             etRegisterStudentEnroll = (EditText) views[1];
                             studentName = etRegisterStudentName.getText().toString();
                             studentEnroll = etRegisterStudentEnroll.getText().toString();
-                            if (!studentEnroll.isEmpty() && !studentName.isEmpty()) {
-                                user.put("STUDENT_NAME", studentName);
-                                user.put("STUDENT_ENROLL", studentEnroll);
-                                user.signUpInBackground(new SignUpCallback() {
-                                    @Override
-                                    public void done(ParseException e) {
+                            ParseQuery<ParseUser> query = ParseUser.getQuery();
+                            query.whereEqualTo("ENROLLMENT", studentEnroll);
+                            query.getFirstInBackground(new GetCallback<ParseUser>() {
+                                @Override
+                                public void done(ParseUser object, ParseException e) {
+                                    user.put("PARENT_OF", object);
+                                    if (!studentEnroll.isEmpty() && !studentName.isEmpty()) {
+                                        user.put("STUDENT_NAME", studentName);
+                                        user.put("STUDENT_ENROLL", studentEnroll);
+                                        user.signUpInBackground(new SignUpCallback() {
+                                            @Override
+                                            public void done(ParseException e) {
+                                                dialog.dismiss();
+                                                if (e == null) {
+                                                    Log.d(TAG, "SignUp Success");
+                                                    startActivity(new Intent(activity, UserFragmentActivity.class));
+                                                    FragmentManager fragmentManager = getFragmentManager();
+                                                    Log.d(TAG, "popping backstack");
+                                                    fragmentManager.popBackStack();
+                                                    activity.finish();
+                                                } else {
+                                                    Log.e(TAG, "SignUp Failed", e);
+                                                    Snackbar.make(rootView, R.string.error_technical, Snackbar.LENGTH_LONG).show();
+                                                }
+                                            }
+                                        });
+                                    } else {
                                         dialog.dismiss();
-                                        if (e == null) {
-                                            Log.d(TAG, "SignUp Success");
-                                            startActivity(new Intent(activity, UserFragmentActivity.class));
-                                            FragmentManager fragmentManager = getFragmentManager();
-                                            Log.d(TAG, "popping backstack");
-                                            fragmentManager.popBackStack();
-                                            activity.finish();
-                                        } else {
-                                            Log.e(TAG, "SignUp Failed", e);
-                                            Snackbar.make(rootView, R.string.error_technical, Snackbar.LENGTH_LONG).show();
-                                        }
+                                        Log.e(TAG, "All details are not filled!");
+                                        Snackbar.make(rootView, R.string.error_fill_details, Snackbar.LENGTH_LONG).show();
                                     }
-                                });
-                            } else {
-                                dialog.dismiss();
-                                Log.e(TAG, "All details are not filled!");
-                                Snackbar.make(rootView, R.string.error_fill_details, Snackbar.LENGTH_LONG).show();
-                            }
+                                }
+                            });
+
                             break;
                     }
                 } else {

@@ -8,6 +8,7 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.util.Log;
+import android.util.SparseBooleanArray;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Toast;
@@ -54,7 +55,7 @@ public class Functions {
     private static ProgressDialog dialog;
     private static View[] views;
     private static int correct, wrong;
-    private static double marks;
+    private static double marks, total;
 
     protected static View[] getChildFragmentViews() {
         return views;
@@ -671,7 +672,7 @@ public class Functions {
                 query.whereEqualTo("BRANCH", quiz.getBranch());
                 query.getFirstInBackground(new GetCallback<ParseObject>() {
                     @Override
-                    public void done(ParseObject object, ParseException e) {
+                    public void done(final ParseObject object, ParseException e) {
                         try {
                             if (e == null) {
                                 JSONObject jsonObject = new JSONObject();
@@ -680,6 +681,7 @@ public class Functions {
                                 jsonObject.put("TIME_TAKEN", getTimeFromMillis(Integer.parseInt(quiz.getTime_limit()) * 60000 - time_left));
                                 jsonObject.put("CORRECT", correct);
                                 jsonObject.put("WRONG", wrong);
+                                total = object.getDouble("TOTAL_MARKS");
                                 JSONArray jsonArray = object.getJSONArray("RESULTS");
                                 Log.d(TAG, jsonArray.toString());
                                 for (int i = 0; i < jsonArray.length(); i++) {
@@ -695,6 +697,15 @@ public class Functions {
                                     public void done(ParseException e) {
                                         if (e == null) {
                                             Log.d(TAG, "Result Added to list");
+                                            List<String> channels = new ArrayList<String>();
+                                            channels.add("P" + user.getString("ENROLLMENT"));
+                                            String title = fragment.getString(R.string.notification_title_quiz_result);
+                                            String message = fragment.getString(R.string.notification_message_quiz_result)
+                                                    .replace("#SUBJECT#", quiz.getSubject())
+                                                    .replace("#MARKS#", marks + "")
+                                                    .replace("#TOTALMARKS#", total + "");
+                                            sendNotification(title, message, channels);
+                                            addNotificationToList(title, message, channels, "SYSTEM");
                                         } else {
                                             Log.e(TAG, "ERROR", e);
                                         }
@@ -758,7 +769,180 @@ public class Functions {
         return (minS + ":" + secS);
     }
 
+    protected static void uploadAttendance(final ParseUser user, final String date, final String subject,
+                                           final String total, final String present, final String absent,
+                                           final String branch, final String sem,
+                                           final SparseBooleanArray checkedList,
+                                           final List<String> studentList) {
+
+        ParseQuery<ParseObject> query = ParseQuery.getQuery("Attendance");
+        query.whereEqualTo("DATE", date);
+        query.whereEqualTo("SUBJECT", subject);
+        query.whereEqualTo("BRANCH", branch);
+        query.whereEqualTo("SEMESTER", sem);
+        query.whereEqualTo("TEACHER", user);
+        query.getFirstInBackground(new GetCallback<ParseObject>() {
+            @Override
+            public void done(final ParseObject attendance, ParseException e) {
+                if (attendance != null && e == null) {
+                    attendance.put("TOTAL", total);
+                    attendance.put("PRESENT_COUNT", present);
+                    attendance.put("ABSENT_COUNT", absent);
+                    try {
+                        attendance.remove("PRESENT");
+                        attendance.remove("ABSENT");
+                        attendance.saveInBackground(new SaveCallback() {
+                            @Override
+                            public void done(ParseException e) {
+                                JSONArray jsonPresentArray, jsonAbsentArray;
+                                jsonPresentArray = new JSONArray();
+                                jsonAbsentArray = new JSONArray();
+                                if (e == null) {
+                                    for (int i = 0; i < studentList.size(); i++) {
+                                        if (checkedList.get(i)) {
+                                            jsonPresentArray.put(studentList.get(i));
+                                        } else {
+                                            jsonAbsentArray.put(studentList.get(i));
+                                        }
+                                    }
+                                    attendance.put("PRESENT", jsonPresentArray);
+                                    attendance.put("ABSENT", jsonAbsentArray);
+                                    attendance.saveInBackground(new SaveCallback() {
+                                        @Override
+                                        public void done(ParseException e) {
+                                            if (e == null) {
+                                                Log.d(TAG, "ATTENDANCE ADDED");
+                                            } else {
+                                                Log.e(TAG, "ERROR", e);
+                                            }
+                                        }
+                                    });
+                                } else {
+                                    Log.e(TAG, "ERROR", e);
+                                }
+                            }
+                        });
+
+                    } catch (Exception e1) {
+                        Log.e(TAG, "ERROR", e1);
+                    }
+                } else if (attendance == null && e.getCode() == 101 && e.getMessage().equals("no results found for query")) {
+                    ParseObject attendance1 = new ParseObject("Attendance");
+                    attendance1.put("DATE", date);
+                    attendance1.put("TEACHER", user);
+                    attendance1.put("SUBJECT", subject);
+                    attendance1.put("TOTAL", total);
+                    attendance1.put("PRESENT_COUNT", present);
+                    attendance1.put("ABSENT_COUNT", absent);
+                    attendance1.put("BRANCH", branch);
+                    attendance1.put("SEMESTER", sem);
+                    JSONArray jsonPresentArray, jsonAbsentArray;
+                    jsonPresentArray = new JSONArray();
+                    jsonAbsentArray = new JSONArray();
+                    try {
+                        for (int i = 0; i < studentList.size(); i++) {
+                            if (checkedList.get(i)) {
+                                jsonPresentArray.put(studentList.get(i));
+                            } else {
+                                jsonAbsentArray.put(studentList.get(i));
+                            }
+                        }
+                        attendance1.put("PRESENT", jsonPresentArray);
+                        attendance1.put("ABSENT", jsonAbsentArray);
+                        attendance1.saveInBackground(new SaveCallback() {
+                            @Override
+                            public void done(ParseException e) {
+                                if (e == null) {
+                                    Log.d(TAG, "ATTENDANCE ADDED");
+                                } else {
+                                    Log.e(TAG, "ERROR", e);
+                                }
+                            }
+                        });
+                    } catch (Exception e1) {
+                        Log.e(TAG, "ERROR", e1);
+                    }
+                } else {
+                    Log.e(TAG, "ERROR" + e.getCode() + " " + e.getMessage(), e);
+                }
+            }
+        });
+    }
+
+    protected static void loadAttendance(final ParseUser user, final Activity activity,
+                                         final ArrayList<Attendance> attendanceList,
+                                         final AttendanceListAdapter attendanceListAdapter,
+                                         final SwipeRefreshLayout srlNotification) {
+        srlNotification.setRefreshing(true);
+        ParseQuery<ParseObject> query = ParseQuery.getQuery("Attendance");
+        query.addAscendingOrder("SUBJECT");
+        query.whereEqualTo("SEMESTER", user.getString("SEMESTER"));
+        query.whereEqualTo("BRANCH", user.getString("BRANCH"));
+        query.findInBackground(new FindCallback<ParseObject>() {
+            @Override
+            public void done(final List<ParseObject> objects, ParseException e) {
+                if (e == null) {
+                    try {
+                        Log.d(TAG, "Query successful");
+                        Map<String, Integer> totalLectures = new HashMap<String, Integer>();
+                        Map<String, Integer> attendedLectures = new HashMap<String, Integer>();
+                        Map<String, ParseUser> subjectTeacher = new HashMap<String, ParseUser>();
+                        attendanceList.clear();
+                        attendanceListAdapter.notifyDataSetChanged();
+                        for (final ParseObject object : objects) {
+                            List<String> enrollList = jsonArrayToList(object.getJSONArray("PRESENT"));
+                            if (totalLectures.containsKey(object.getString("SUBJECT"))) {
+                                totalLectures.put(
+                                        object.getString("SUBJECT"),
+                                        totalLectures.get(object.getString("SUBJECT")) + 1);
+                            } else {
+                                totalLectures.put(object.getString("SUBJECT"), 1);
+                            }
+                            if (enrollList.contains(user.getString("ENROLLMENT"))) {
+                                if (attendedLectures.containsKey(object.getString("SUBJECT"))) {
+                                    attendedLectures.put(object.getString("SUBJECT"),
+                                            attendedLectures.get(object.getString("SUBJECT")) + 1);
+                                } else {
+                                    attendedLectures.put(object.getString("SUBJECT"), 1);
+                                }
+                            } else {
+                                if (!attendedLectures.containsKey(object.getString("SUBJECT"))) {
+                                    attendedLectures.put(object.getString("SUBJECT"), 0);
+                                }
+                            }
+                            subjectTeacher.put(object.getString("SUBJECT"),
+                                    object.getParseUser("TEACHER").fetchIfNeeded());
+                        }
+                        for (String key : subjectTeacher.keySet()) {
+                            attendanceList.add(new Attendance(key, totalLectures.get(key),
+                                    attendedLectures.get(key), subjectTeacher.get(key)));
+                            attendanceListAdapter.notifyDataSetChanged();
+                        }
+                    } catch (Exception e1) {
+                        Log.e(TAG, "Query unsuccessful", e);
+                    }
+                } else {
+                    Log.e(TAG, "Query unsuccessful", e);
+                }
+                srlNotification.setRefreshing(false);
+            }
+        });
+    }
+
+    protected static List<String> jsonArrayToList(JSONArray jsonArray) {
+        List<String> stringList = new ArrayList<>();
+        try {
+            for (int i = 0; i < jsonArray.length(); i++) {
+                stringList.add(jsonArray.getString(i));
+            }
+        } catch (Exception e) {
+            Log.e(TAG, "ERROR", e);
+        }
+        return stringList;
+    }
+
     public interface OnMarksCalculatedListener {
         void onMarksCalculated(double marks, int correct, double total);
     }
 }
+
