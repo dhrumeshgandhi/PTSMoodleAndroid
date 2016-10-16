@@ -60,7 +60,7 @@ public class UserFragmentActivity extends AppCompatActivity implements View.OnCl
                         public void done(ParseException e) {
                             if (e == null) Log.d(TAG, "Channel Subscribed");
                             else Log.e(TAG, "ERROR", e);
-                            tvExtraDetail.setText("");
+                            tvExtraDetail.setText("P" + user.getString("STUDENT_ENROLL"));
                             Functions.setFragment(getSupportFragmentManager(), new ParentFragment(), "PARENT_FRAGMENT", R.id.fragmentContainerUser, false);
                         }
                     });

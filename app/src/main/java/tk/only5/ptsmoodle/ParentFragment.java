@@ -9,6 +9,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.TextView;
 
 import com.parse.ParseUser;
 
@@ -18,7 +19,8 @@ public class ParentFragment extends Fragment implements View.OnClickListener {
     private View rootView;
     private Activity activity;
     private String TAG = InitClass.TAG;
-    private Button btnNotifications;
+    private Button btnNotifications, btnCheckAttendance;
+    private TextView tvStudentName, tvStudentEnroll;
     private ParseUser user;
 
     @Nullable
@@ -29,7 +31,13 @@ public class ParentFragment extends Fragment implements View.OnClickListener {
         activity.setTitle("Parent");
         user = ParseUser.getCurrentUser();
         btnNotifications = (Button) rootView.findViewById(R.id.btnNotifications);
+        btnCheckAttendance = (Button) rootView.findViewById(R.id.btnCheckAttendance);
+        tvStudentName = (TextView) rootView.findViewById(R.id.tvStudentName);
+        tvStudentEnroll = (TextView) rootView.findViewById(R.id.tvStudentEnroll);
+        tvStudentName.setText(user.getString("STUDENT_NAME"));
+        tvStudentEnroll.setText(user.getString("STUDENT_ENROLL"));
         btnNotifications.setOnClickListener(this);
+        btnCheckAttendance.setOnClickListener(this);
         return rootView;
     }
 
@@ -41,6 +49,8 @@ public class ParentFragment extends Fragment implements View.OnClickListener {
             data.putString("NOTIFICATION_FOR", "P" + user.getString("STUDENT_ENROLL"));
             notificationFragment.setArguments(data);
             Functions.setFragment(null, notificationFragment, "NOTIFICATION_FRAGMENT", R.id.fragmentContainerUser, true);
+        } else if (view.equals(btnCheckAttendance)) {
+            Functions.setFragment(null, new AttendanceFragment(), "ATTENDANCE_FRAGEMENT", R.id.fragmentContainerUser, true);
         }
     }
 }

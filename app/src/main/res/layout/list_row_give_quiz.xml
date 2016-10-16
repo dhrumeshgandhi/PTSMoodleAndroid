@@ -23,7 +23,7 @@
         android:layout_alignParentStart="true"
         android:layout_below="@+id/tvGiveQuizSubject"
         android:layout_marginTop="10dp"
-        android:text="Name of File"
+        android:text="Name of Quiz"
         android:textAppearance="?android:attr/textAppearanceSmall" />
 
     <TextView

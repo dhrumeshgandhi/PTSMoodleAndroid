@@ -32,11 +32,14 @@
                     android:inputType="textEmailAddress" />
             </android.support.design.widget.TextInputLayout>
 
+
             <android.support.design.widget.TextInputLayout
                 android:id="@+id/tilRegisterPassword"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_below="@id/tilRegisterEmail"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentStart="true"
+                android:layout_below="@+id/tilRegisterEmail"
                 android:hint="Password">
 
                 <EditText
@@ -143,6 +146,7 @@
                 android:layout_centerHorizontal="true"
                 android:layout_marginTop="5dp"
                 android:text="@string/label_register" />
+
         </RelativeLayout>
     </ScrollView>
 </FrameLayout>

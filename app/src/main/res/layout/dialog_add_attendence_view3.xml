@@ -1,0 +1,98 @@
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_margin="10dp">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentTop="true">
+
+            <TextView
+                android:id="@+id/tvAttendanceAddedLabel"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="15dp"
+                android:text="Following Attendance has been added:"
+                android:textSize="20sp" />
+
+            <TextView
+                android:id="@+id/tvTotal"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/tvAttendanceAddedLabel"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="10dp"
+                android:text="Total Students : "
+                android:textSize="15sp" />
+
+            <TextView
+                android:id="@+id/tvPresent"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/tvTotal"
+                android:layout_marginLeft="25dp"
+                android:layout_marginTop="15dp"
+                android:text="Present"
+                android:textSize="15sp" />
+
+            <TextView
+                android:id="@+id/tvPresentCount"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignBaseline="@id/tvPresent"
+                android:layout_marginLeft="5dp"
+                android:layout_toRightOf="@id/tvPresent"
+                android:text="Count"
+                android:textSize="15sp" />
+
+            <TextView
+                android:id="@+id/tvPresentList"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/tvPresent"
+                android:layout_marginLeft="50dp"
+                android:layout_marginTop="5dp"
+                android:text="Enrollments"
+                android:textSize="15sp" />
+
+            <TextView
+                android:id="@+id/tvAbsent"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/tvPresentList"
+                android:layout_marginLeft="25dp"
+                android:layout_marginTop="15dp"
+                android:text="Absent"
+                android:textSize="15sp" />
+
+            <TextView
+                android:id="@+id/tvAbsentCount"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignBaseline="@id/tvAbsent"
+                android:layout_marginLeft="5dp"
+                android:layout_toRightOf="@id/tvAbsent"
+                android:text="Count"
+                android:textSize="15sp" />
+
+            <TextView
+                android:id="@+id/tvAbesentList"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/tvAbsent"
+                android:layout_marginLeft="50dp"
+                android:layout_marginTop="5dp"
+                android:text="Enrollments"
+                android:textSize="15sp" />
+        </RelativeLayout>
+
+    </ScrollView>
+
+</FrameLayout>

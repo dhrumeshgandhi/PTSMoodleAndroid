@@ -6,7 +6,7 @@
 
 
     <TextView
-        android:id="@+id/tvNotificationUserSelectionEnroll"
+        android:id="@+id/tvNotificationStudentSelectionEnroll"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentLeft="true"
@@ -21,7 +21,7 @@
         android:layout_height="wrap_content"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
-        android:layout_below="@+id/tvNotificationUserSelectionEnroll"
+        android:layout_below="@+id/tvNotificationStudentSelectionEnroll"
         android:layout_marginTop="7dp"
         android:text="Message"
         android:textAppearance="?android:attr/textAppearanceSmall" />
