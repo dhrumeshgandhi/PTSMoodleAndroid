@@ -11,7 +11,8 @@
 -Download Uploaded Notes(Student)
 -Add Quiz(Teacher)
 -Give Quiz(Student)
--See Result of Quiz(Parent & Student)
+     -Notification to related Parent
+     -Entry in Notification Table
 -Send Notification(Teacher)
 -Add Attendence (Teacher)
 -See Attendence(Parent & Teacher)
@@ -19,6 +20,7 @@
 
 <b>PTS Moodle (Remaining)</b>
 <pre>
+-See Result of Quiz(Parent & Student)
 -Add Reports of Exams(Teacher)
 -See Reports(Parent & Teacher)
 </pre>
